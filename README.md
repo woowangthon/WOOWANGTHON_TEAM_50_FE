@@ -166,7 +166,7 @@ src/
 
 ## 8. 백엔드 연동
 
-백엔드(`WOOWANGTHON_TEAM_50_BE`) 기준으로 연결했습니다. 정확한 형식은 백엔드 서버의 `/docs`(Swagger)를 기준으로 합니다.
+백엔드(`WOOWANGTHON_TEAM_50_BE`) 기준으로 연결했습니다. 요청·응답 형식은 [`docs/backend-api-guide.txt`](docs/backend-api-guide.txt)와 백엔드 서버의 `/docs`(Swagger)를 기준으로 합니다.
 
 ### 인증 흐름
 
@@ -195,13 +195,13 @@ src/
 `.env.example`을 `.env.local`로 복사해 값을 채웁니다. (Vite에서는 `VITE_` 접두사가 필요하고, `.env.local`은 GitHub에 올라가지 않습니다)
 
 ```text
-VITE_API_BASE_URL=http://localhost:8000
-VITE_SUPABASE_URL=            # 백엔드와 같은 Supabase 프로젝트
-VITE_SUPABASE_ANON_KEY=       # 공개용 anon 키만. service role 키는 절대 넣지 않기
+VITE_API_URL=http://localhost:8000
+VITE_SUPABASE_URL=https://fbctzysvmyedxvucopxt.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=   # publishable 키만. sb_secret_ 키는 절대 넣지 않기
 VITE_USE_MOCK=false
 ```
 
-Supabase 키가 비어 있으면 **목업 모드**로 동작합니다. 백엔드 없이 아무 이메일로 가입·로그인할 수 있고, 데이터는 브라우저에만 저장됩니다. (`src/mocks/`)
+publishable 키가 비어 있으면 **목업 모드**로 동작합니다. 백엔드 없이 아무 이메일로 가입·로그인할 수 있고, 데이터는 브라우저에만 저장됩니다. (`src/mocks/`)
 
 ---
 
