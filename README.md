@@ -70,8 +70,9 @@ AI는 탐색할 거리를 **제안**하고, 무엇에 흥미를 느끼는지는 
 | 프레임워크 | React | 확정 |
 | 빌드 도구 | Vite | 확정 |
 | 라우팅 | React Router (`react-router-dom`) | 확정 |
-| 스타일링 | 미정 (Tailwind CSS 등 협의) | 미정 |
-| API 호출 | `fetch` 또는 `axios` | 미정 |
+| 스타일링 | 일반 CSS (화면별 `.css`, 색상은 `src/index.css` 토큰) | 사용 중 |
+| API 호출 | `fetch` (`src/api/client.js`) | 사용 중 |
+| 인증 | Supabase Auth (`@supabase/supabase-js`) | 사용 중 |
 | 배포 | Vercel 또는 Netlify 등 | 미정 |
 
 백엔드(Python), DB, LLM API는 백엔드 저장소의 README를 참고하세요.
@@ -163,30 +164,44 @@ src/
 
 ---
 
-## 8. 백엔드 연동 (API 명세 초안)
+## 8. 백엔드 연동
 
-실제 경로와 응답 형식은 백엔드 팀과 협의해 확정합니다. 아래는 협의를 위한 초안입니다.
+백엔드(`WOOWANGTHON_TEAM_50_BE`) 기준으로 연결했습니다. 요청·응답 형식은 [`docs/backend-api-guide.txt`](docs/backend-api-guide.txt)와 백엔드 서버의 `/docs`(Swagger)를 기준으로 합니다.
 
-| 기능 | 메서드 | 경로 (초안) |
-| --- | --- | --- |
-| 회원가입 | POST | `/auth/signup` |
-| 로그인 | POST | `/auth/login` |
-| 프로필 저장 | POST | `/profile` |
-| 오늘의 키워드 조회 | GET | `/keywords/today` |
-| 키워드 관련 정보 조회 | GET | `/keywords/{id}/articles` |
-| 키워드 반응 저장 | POST | `/keywords/{id}/reaction` |
-| AI 대화 | POST | `/chat` |
-| 추천 피드 조회 | GET | `/feed` |
+### 인증 흐름
+
+- 회원가입·로그인은 프론트가 **Supabase Auth**(`@supabase/supabase-js`)로 직접 처리합니다. 백엔드에는 로그인 API가 없습니다.
+- 백엔드 요청에는 Supabase 토큰을 `Authorization: Bearer <access_token>`으로 붙입니다. (`src/api/client.js`)
+- 토큰이 만료돼 401이 오면 자동으로 로그아웃하고 로그인 화면으로 돌아갑니다.
+
+### 사용하는 API
+
+| 기능 | 메서드 | 경로 | 화면 |
+| --- | --- | --- | --- |
+| 내 프로필·성향 조회 | GET | `/me` (프로필이 없으면 404 `profile_not_found`) | 홈, 프로필 |
+| 프로필 등록 | POST | `/me` (`nickname` 1~20자, `grade` 1~3 또는 null) | 프로필 |
+| 프로필 수정 | PATCH | `/me` | 프로필 |
+| 추천 카드 목록 | GET | `/feed?n=10` | 홈 |
+| 카드 반응 저장 | POST | `/reactions` (`like`·`dislike`·`save`·`pass`·`choose`) | 홈 |
+
+### 화면 흐름
+
+```text
+/ (로그인·회원가입) → /home → 프로필 없으면 /profile → 저장 후 /home
+```
 
 ### 환경 변수
 
-API 주소는 코드에 직접 쓰지 않고 `.env` 파일로 관리합니다. (Vite에서는 `VITE_` 접두사가 필요합니다.)
+`.env.example`을 `.env.local`로 복사해 값을 채웁니다. (Vite에서는 `VITE_` 접두사가 필요하고, `.env.local`은 GitHub에 올라가지 않습니다)
 
 ```text
-VITE_API_BASE_URL=http://localhost:8000
+VITE_API_URL=http://localhost:8000
+VITE_SUPABASE_URL=https://fbctzysvmyedxvucopxt.supabase.co
+VITE_SUPABASE_PUBLISHABLE_KEY=   # publishable 키만. sb_secret_ 키는 절대 넣지 않기
+VITE_USE_MOCK=false
 ```
 
-`.env`는 GitHub에 올리지 않습니다. (`.gitignore`에 포함되어 있는지 확인)
+publishable 키가 비어 있으면 **목업 모드**로 동작합니다. 백엔드 없이 아무 이메일로 가입·로그인할 수 있고, 데이터는 브라우저에만 저장됩니다. (`src/mocks/`)
 
 ---
 

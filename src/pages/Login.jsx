@@ -1,18 +1,52 @@
 import { useState } from 'react'
-import { validateLogin } from '../utils/validateLogin.js'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useAuth } from '../auth/AuthContext.js'
+import MockNotice from '../components/MockNotice.jsx'
+import { MIN_PASSWORD_LENGTH, validateLogin } from '../utils/validateLogin.js'
 import './Login.css'
 
+const COPY = {
+  login: {
+    eyebrow: 'WELCOME BACK',
+    title: '다시 만나서 반가워요',
+    description: 'FindME에 로그인하고 시작해 보세요.',
+    submit: '로그인',
+    pending: '로그인하는 중…',
+    switchText: '처음 오셨나요?',
+    switchAction: '회원가입',
+  },
+  signup: {
+    eyebrow: 'NICE TO MEET YOU',
+    title: 'FindME를 시작해 볼까요?',
+    description: '이메일과 비밀번호만 있으면 계정을 만들 수 있어요.',
+    submit: '회원가입',
+    pending: '계정을 만드는 중…',
+    switchText: '이미 계정이 있나요?',
+    switchAction: '로그인',
+  },
+}
+
 export default function Login() {
+  const { session, signIn, signUp } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const [mode, setMode] = useState('login')
   const [values, setValues] = useState({ email: '', password: '' })
   const [touched, setTouched] = useState({ email: false, password: false })
   const [showPassword, setShowPassword] = useState(false)
-  const [message, setMessage] = useState('')
-  const errors = validateLogin(values)
+  const [submitting, setSubmitting] = useState(false)
+  const [message, setMessage] = useState({ text: '', tone: 'info' })
+  const errors = validateLogin(values, mode)
+  const copy = COPY[mode]
+
+  // 이미 로그인했다면 로그인 화면 대신 홈으로 보냅니다. (제출 중에는 아래 handleSubmit이 이동을 맡습니다)
+  if (session && !submitting) return <Navigate to={location.state?.from || '/home'} replace />
 
   function handleChange(event) {
     const { name, value } = event.target
     setValues((previous) => ({ ...previous, [name]: value }))
-    setMessage('')
+    setMessage({ text: '', tone: 'info' })
   }
 
   function handleBlur(event) {
@@ -20,10 +54,16 @@ export default function Login() {
     setTouched((previous) => ({ ...previous, [name]: true }))
   }
 
-  function handleSubmit(event) {
+  function switchMode() {
+    setMode((previous) => (previous === 'login' ? 'signup' : 'login'))
+    setTouched({ email: false, password: false })
+    setMessage({ text: '', tone: 'info' })
+  }
+
+  async function handleSubmit(event) {
     event.preventDefault()
     setTouched({ email: true, password: true })
-    setMessage('')
+    setMessage({ text: '', tone: 'info' })
 
     const firstInvalidField = Object.keys(errors)[0]
     if (firstInvalidField) {
@@ -31,12 +71,37 @@ export default function Login() {
       return
     }
 
-    // 로그인 API가 준비되면 여기에서 요청을 연결합니다.
-    setMessage('입력값 검사가 완료됐어요. 실제 로그인 기능은 아직 준비 중이에요.')
+    const email = values.email.trim()
+    setSubmitting(true)
+    try {
+      if (mode === 'login') {
+        await signIn(email, values.password)
+        navigate(location.state?.from || '/home', { replace: true })
+        return
+      }
+
+      const { needsConfirmation } = await signUp(email, values.password)
+      if (needsConfirmation) {
+        setMode('login')
+        setValues((previous) => ({ ...previous, password: '' }))
+        setTouched({ email: false, password: false })
+        setMessage({
+          text: `${email}로 인증 메일을 보냈어요. 메일의 링크를 누른 뒤 로그인해 주세요.`,
+          tone: 'success',
+        })
+      } else {
+        navigate('/profile', { replace: true })
+      }
+    } catch (error) {
+      setMessage({ text: error.message, tone: 'error' })
+    } finally {
+      setSubmitting(false)
+    }
   }
 
   const emailError = touched.email ? errors.email : undefined
   const passwordError = touched.password ? errors.password : undefined
+  const passwordHint = mode === 'signup' && !passwordError
 
   return (
     <main className="login-page">
@@ -47,9 +112,9 @@ export default function Login() {
 
       <section className="login-card" aria-labelledby="login-title">
         <header className="login-header">
-          <p className="login-eyebrow">WELCOME BACK</p>
-          <h1 id="login-title">다시 만나서 반가워요</h1>
-          <p className="login-description">FindME에 로그인하고 시작해 보세요.</p>
+          <p className="login-eyebrow">{copy.eyebrow}</p>
+          <h1 id="login-title">{copy.title}</h1>
+          <p className="login-description">{copy.description}</p>
         </header>
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>
@@ -59,7 +124,7 @@ export default function Login() {
               id="email"
               name="email"
               type="email"
-              autoComplete="username"
+              autoComplete={mode === 'login' ? 'username' : 'email'}
               autoCapitalize="none"
               spellCheck={false}
               placeholder="name@example.com"
@@ -80,14 +145,14 @@ export default function Login() {
                 id="password"
                 name="password"
                 type={showPassword ? 'text' : 'password'}
-                autoComplete="current-password"
-                placeholder="비밀번호를 입력해 주세요"
+                autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                placeholder={mode === 'login' ? '비밀번호를 입력해 주세요' : `${MIN_PASSWORD_LENGTH}자 이상 입력해 주세요`}
                 value={values.password}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 required
                 aria-invalid={Boolean(passwordError)}
-                aria-describedby={passwordError ? 'password-error' : undefined}
+                aria-describedby={passwordError ? 'password-error' : passwordHint ? 'password-hint' : undefined}
               />
               <button
                 type="button"
@@ -101,14 +166,23 @@ export default function Login() {
               </button>
             </div>
             {passwordError && <p id="password-error" className="field-error" aria-live="polite">{passwordError}</p>}
+            {passwordHint && <p id="password-hint" className="field-hint">비밀번호는 {MIN_PASSWORD_LENGTH}자 이상이에요.</p>}
           </div>
 
-          <button className="login-submit" type="submit">로그인 <span aria-hidden="true">↗</span></button>
-          <p className="login-message" role="status">{message}</p>
+          <button className="login-submit" type="submit" disabled={submitting}>
+            {submitting ? copy.pending : <>{copy.submit} <span aria-hidden="true">↗</span></>}
+          </button>
+          <p className={`login-message is-${message.tone}`} role="status">{message.text}</p>
         </form>
+
+        <p className="login-switch">
+          {copy.switchText}
+          <button type="button" onClick={switchMode}>{copy.switchAction}</button>
+        </p>
       </section>
 
       <p className="login-footer">나를 찾는 여정, FindME</p>
+      <MockNotice />
     </main>
   )
 }

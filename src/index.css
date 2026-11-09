@@ -1,7 +1,23 @@
 :root {
+  /* 로그인 화면에서 쓰던 색을 그대로 토큰으로 정리했습니다. */
+  --pine: #245c4e;
+  --pine-deep: #184839;
+  --leaf: #36745d;
+  --moss: #47735f;
+  --ink: #182b29;
+  --muted: #66766e;
+  --soft-text: #486257;
+  --line: #e1e8e2;
+  --field-line: #cbd7cf;
+  --mist: #eef4f0;
+  --dew: #e3eee7;
+  --paper: #fff;
+  --page: #f5f7f5;
+  --danger: #ab302e;
+
   font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
-  color: #182b29;
-  background: #f5f7f5;
+  color: var(--ink);
+  background: var(--page);
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -9,7 +25,23 @@
 }
 
 * { box-sizing: border-box; }
-body { margin: 0; min-width: 320px; }
+body { margin: 0; min-width: 320px; background: var(--page); word-break: keep-all; overflow-wrap: break-word; }
 button, input { font: inherit; }
 button { cursor: pointer; }
-button:focus-visible { outline: 3px solid #318974; outline-offset: 4px; }
+button:focus-visible, a:focus-visible { outline: 3px solid #318974; outline-offset: 4px; }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}

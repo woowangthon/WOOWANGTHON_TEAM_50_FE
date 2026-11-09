@@ -1,0 +1,71 @@
+import { Link } from 'react-router-dom'
+import './ProfileSummary.css'
+
+const GROUPS = [
+  { key: 'interest', label: '흥미' },
+  { key: 'style', label: '일하는 방식' },
+  { key: 'value', label: '중요하게 여기는 것' },
+]
+
+function TraitBar({ trait }) {
+  const percent = Math.round(trait.score * 100)
+  return (
+    <li className="trait">
+      <span className="trait-label">{trait.label}</span>
+      <span className="trait-track" role="img" aria-label={`${trait.label} ${percent}%`}>
+        <span className="trait-fill" style={{ width: `${percent}%` }} />
+      </span>
+    </li>
+  )
+}
+
+export default function ProfileSummary({ me }) {
+  const topTraits = [...me.traits]
+    .filter((trait) => trait.score > 0.005)
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 3)
+
+  return (
+    <section className="profile-summary" aria-labelledby="profile-summary-title">
+      <div className="profile-summary-head">
+        <span className="profile-avatar" aria-hidden="true">{me.nickname.slice(0, 1)}</span>
+        <div className="profile-summary-name">
+          <h1 id="profile-summary-title">{me.nickname}</h1>
+          <p>{me.grade ? `${me.grade}학년, ` : ''}반응한 카드 {me.n_reactions}장</p>
+        </div>
+        <Link to="/profile" className="profile-edit">프로필 수정</Link>
+      </div>
+
+      {me.n_reactions === 0 ? (
+        <p className="profile-summary-empty">
+          아래 카드에 반응할수록 내가 끌리는 분야가 여기에 쌓여요.
+        </p>
+      ) : topTraits.length === 0 ? (
+        <p className="profile-summary-empty">
+          아직 뚜렷하게 끌린 성향이 없어요. 마음에 드는 카드에 끌려요를 눌러 보세요.
+        </p>
+      ) : (
+        <>
+          <h2 className="profile-summary-subtitle">지금까지 많이 끌린 성향</h2>
+          <ul className="trait-list">
+            {topTraits.map((trait) => <TraitBar key={trait.code} trait={trait} />)}
+          </ul>
+
+          <details className="trait-details">
+            <summary>11가지 성향 모두 보기</summary>
+            {GROUPS.map((group) => (
+              <div key={group.key} className="trait-group">
+                <h3>{group.label}</h3>
+                <ul className="trait-list">
+                  {me.traits
+                    .filter((trait) => trait.group === group.key)
+                    .map((trait) => <TraitBar key={trait.code} trait={trait} />)}
+                </ul>
+              </div>
+            ))}
+          </details>
+        </>
+      )}
+    </section>
+  )
+}
