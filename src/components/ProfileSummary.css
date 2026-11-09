@@ -1,0 +1,124 @@
+.profile-summary {
+  padding: 22px 22px 18px;
+  border-radius: 20px;
+  background: var(--dew);
+}
+
+.profile-summary-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.profile-avatar {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--pine);
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.profile-summary-name { flex: 1; min-width: 0; }
+
+.profile-summary-name h1 {
+  margin: 0;
+  overflow: hidden;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  line-height: 1.35;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.profile-summary-name p { margin: 2px 0 0; color: var(--soft-text); font-size: 13px; }
+
+.profile-edit {
+  flex: none;
+  min-height: 40px;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--pine);
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.profile-edit:hover { background: var(--mist); }
+
+.profile-summary-empty {
+  margin: 18px 0 2px;
+  color: var(--soft-text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.profile-summary-subtitle {
+  margin: 20px 0 10px;
+  font-size: 14px;
+  font-weight: 650;
+}
+
+.trait-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.trait {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  align-items: center;
+  gap: 12px;
+}
+
+.trait-label { color: var(--ink); font-size: 14px; }
+
+.trait-track {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #c9dccf;
+}
+
+.trait-fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: var(--pine);
+  transition: width 0.5s ease;
+}
+
+.trait-details { margin-top: 14px; }
+
+.trait-details summary {
+  min-height: 40px;
+  display: flex;
+  align-items: center;
+  color: var(--pine);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.trait-details summary:focus-visible { outline: 3px solid #318974; outline-offset: 2px; border-radius: 4px; }
+
+.trait-group { margin-top: 12px; }
+
+.trait-group h3 {
+  margin: 0 0 8px;
+  color: var(--moss);
+  font-size: 13px;
+  font-weight: 650;
+}

@@ -1,0 +1,44 @@
+.app-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 18px 0;
+}
+
+.app-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--ink);
+  font-size: 20px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  text-decoration: none;
+}
+
+.app-brand-symbol {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  color: #fff;
+  background: var(--pine);
+  font-family: Georgia, serif;
+  font-size: 18px;
+}
+
+.app-brand-accent { color: var(--leaf); }
+
+.app-header-action {
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--soft-text);
+  background: transparent;
+  font-size: 14px;
+}
+
+.app-header-action:hover { background: var(--mist); }
