@@ -1,0 +1,65 @@
+.saved-list {
+  display: grid;
+  gap: 12px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.saved-card {
+  padding: 20px 20px 18px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+}
+
+.saved-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -6px 0 4px;
+}
+
+.saved-remove {
+  min-height: 36px;
+  padding: 6px 12px;
+  border: 0;
+  border-radius: 8px;
+  color: var(--soft-text);
+  background: transparent;
+  font-size: 13px;
+}
+
+.saved-remove:hover:not(:disabled) { color: var(--danger); background: #fbeeed; }
+
+.saved-message {
+  margin: -10px 0 12px;
+  color: var(--soft-text);
+  font-size: 13px;
+}
+
+.saved-message:empty { margin: 0; }
+
+.saved-date {
+  margin: 0;
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.saved-card h2 {
+  margin: 0 0 8px;
+  font-size: 19px;
+  font-weight: 700;
+  letter-spacing: -0.6px;
+  line-height: 1.4;
+}
+
+.saved-body {
+  margin: 0 0 14px;
+  color: #33463f;
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.saved-body:last-child { margin-bottom: 0; }

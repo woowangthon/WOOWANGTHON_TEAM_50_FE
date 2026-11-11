@@ -1,0 +1,66 @@
+.app-layout {
+  width: 100%;
+  max-width: 560px;
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 0 20px 48px;
+  background: radial-gradient(ellipse at 50% 0%, #e3eee7, transparent 50%) no-repeat;
+}
+
+@media (min-width: 600px) {
+  .app-layout { padding: 8px 24px 64px; }
+}
+
+/* 리포트·저장한 카드처럼 제목이 있는 화면의 머리말 */
+.page-head { margin: 10px 0 22px; }
+
+.page-head h1 {
+  margin: 0 0 6px;
+  font-size: 24px;
+  font-weight: 750;
+  letter-spacing: -0.8px;
+  line-height: 1.35;
+}
+
+.page-head p {
+  margin: 0;
+  color: var(--soft-text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* 불러오는 중·오류·빈 상태 */
+.page-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 48px 24px;
+  border: 1px dashed var(--field-line);
+  border-radius: 20px;
+  text-align: center;
+}
+
+.page-placeholder p {
+  max-width: 28em;
+  margin: 0;
+  color: var(--soft-text);
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.page-secondary {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border: 1px solid var(--field-line);
+  border-radius: 10px;
+  color: var(--pine);
+  background: var(--paper);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.page-secondary:hover { background: var(--mist); }

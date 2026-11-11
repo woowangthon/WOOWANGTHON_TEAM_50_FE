@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, errorMessage } from '../api/client.js'
 import { getFeed, postReaction } from '../api/feed.js'
+import { saveCard, unsaveCard } from '../api/me.js'
+import MajorList from './MajorList.jsx'
 import './FeedDeck.css'
 
 const TYPE_LABEL = {
@@ -12,8 +14,6 @@ const TYPE_LABEL = {
 const REACTION_NOTICE = {
   like: '끌려요로 기록했어요.',
   dislike: '별로예요로 기록했어요.',
-  save: '저장했어요.',
-  pass: '넘겼어요.',
 }
 
 export default function FeedDeck({ onReacted }) {
@@ -81,6 +81,23 @@ export default function FeedDeck({ onReacted }) {
     }
   }
 
+  // 저장은 카드를 넘기지 않습니다. 저장한 뒤에도 끌려요·별로예요를 고를 수 있습니다.
+  async function toggleSave() {
+    if (sending) return
+    const nextSaved = !card.saved
+    setSending('save')
+    setActionError('')
+    try {
+      await (nextSaved ? saveCard(card.card_id) : unsaveCard(card.card_id))
+      setCards((previous) => previous.map((c, i) => (i === index ? { ...c, saved: nextSaved } : c)))
+      setNotice(nextSaved ? '저장했어요. 저장한 카드에서 다시 볼 수 있어요.' : '저장을 취소했어요.')
+    } catch (error) {
+      setActionError(errorMessage(error))
+    } finally {
+      setSending(null)
+    }
+  }
+
   function goNext() {
     shouldFocus.current = true
     if (index + 1 < cards.length) {
@@ -123,12 +140,30 @@ export default function FeedDeck({ onReacted }) {
       {status === 'ready' && card && (
         <div className="feed-stack" data-remaining={Math.min(cards.length - index - 1, 2)}>
           <article key={card.impression_id} className="feed-card" aria-labelledby={`card-${card.impression_id}`}>
-            <p className="feed-card-kind">
-              {TYPE_LABEL[card.type] || '카드'}
-              {card.source === 'random' && <span className="feed-card-tag">새로운 분야</span>}
-            </p>
+            <div className="feed-card-top">
+              <p className="feed-card-kind">
+                {TYPE_LABEL[card.type] || '카드'}
+                {card.source === 'random' && <span className="feed-card-tag">새로운 분야</span>}
+              </p>
+              {card.options.length === 0 && (
+                <button
+                  type="button"
+                  className={`feed-save${card.saved ? ' is-saved' : ''}`}
+                  aria-pressed={Boolean(card.saved)}
+                  disabled={Boolean(sending)}
+                  onClick={toggleSave}
+                >
+                  {sending === 'save' ? '저장하는 중…' : card.saved ? '저장됨' : '저장'}
+                </button>
+              )}
+            </div>
             <h3 id={`card-${card.impression_id}`} ref={titleRef} tabIndex={-1}>{card.title}</h3>
             <p className="feed-card-body">{card.body}</p>
+            {card.majors?.length > 0 && (
+              <div className="feed-card-majors">
+                <MajorList majors={card.majors} />
+              </div>
+            )}
 
             {card.options.length > 0 ? (
               <div className="feed-options" role="group" aria-label="선택지">
@@ -154,17 +189,6 @@ export default function FeedDeck({ onReacted }) {
                 </button>
               </div>
             )}
-
-            <div className="feed-card-foot">
-              {card.options.length === 0 && (
-                <button type="button" className="feed-text-button" disabled={Boolean(sending)} onClick={() => react('save')}>
-                  {sending === 'save' ? '저장하는 중…' : '저장'}
-                </button>
-              )}
-              <button type="button" className="feed-text-button" disabled={Boolean(sending)} onClick={() => react('pass')}>
-                {sending === 'pass' ? '넘기는 중…' : '넘기기'}
-              </button>
-            </div>
 
             {actionError && <p className="feed-error" role="alert">{actionError}</p>}
           </article>
