@@ -181,14 +181,27 @@ src/
 | 내 프로필·성향 조회 | GET | `/me` (프로필이 없으면 404 `profile_not_found`) | 홈, 프로필 |
 | 프로필 등록 | POST | `/me` (`nickname` 1~20자, `grade` 1~3 또는 null) | 프로필 |
 | 프로필 수정 | PATCH | `/me` | 프로필 |
-| 추천 카드 목록 | GET | `/feed?n=10` | 홈 |
-| 카드 반응 저장 | POST | `/reactions` (`like`·`dislike`·`save`·`pass`·`choose`) | 홈 |
+| 추천 카드 목록 | GET | `/feed?n=10` (직업 카드는 `majors`에 관련 학과) | 홈 |
+| 카드 반응 저장 | POST | `/reactions` (화면에서는 `like`·`dislike`·`choose`만 사용) | 홈 |
+| 저장한 카드 | GET | `/me/saved` (최근 순) | 저장한 카드 |
+| 카드 저장·저장 취소 | PUT·DELETE | `/me/saved/{card_id}` (**백엔드 요청 중**, 지금은 목업만) | 홈, 저장한 카드 |
+| 성향 리포트 | GET | `/me/report` (`ready=false`면 `remaining`만 사용) | 내 리포트 |
+
+백엔드의 `GET /onboarding`(가입 설문 카드 5장)은 쓰지 않습니다. 가입 설문은 FE의 12문항 관심사 설문(`/interests`)을 사용합니다.
 
 ### 화면 흐름
 
 ```text
-/ (로그인·회원가입) → /home → 프로필 없으면 /profile → 저장 후 /home
+/ (로그인·회원가입) → /interests (설문 미완료 시) → /home → 프로필 없으면 /profile → 저장 후 /home
+
+로그인 후 상단 메뉴: 오늘의 카드(/home) · 내 리포트(/report) · 저장한 카드(/saved)
 ```
+
+- 카드는 끌려요·별로예요(선택형은 선택지)를 누르면 다음으로 넘어갑니다. 넘기기는 없습니다.
+- 저장은 반응이 아니라 북마크입니다. 저장해도 카드가 넘어가지 않고 성향에도 반영되지 않습니다.
+- 리포트는 최소 개수 없이 끌려요를 1번 이상 누르면 열립니다. (**백엔드 요청 중**, 지금 백엔드는 5개 기준)
+- `summary_by_ai`가 true면 Gemini가 쓴 요약이라 "AI 진로 동료가 정리한 내 성향"으로 표시합니다.
+- 직업 점수(`jobs[].score`)는 화면에 보여 주지 않고 순서로만 씁니다.
 
 ### 환경 변수
 

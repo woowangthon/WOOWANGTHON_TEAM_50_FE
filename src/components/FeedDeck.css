@@ -53,7 +53,7 @@
 .feed-card {
   position: relative;
   z-index: 1;
-  padding: 26px 24px 18px;
+  padding: 26px 24px 24px;
   border: 1px solid var(--line);
   border-radius: 24px;
   background: var(--paper);
@@ -66,16 +66,47 @@
   to { opacity: 1; transform: none; }
 }
 
+.feed-card-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: -6px 0 10px;
+}
+
 .feed-card-kind {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 8px;
-  margin: 0 0 14px;
+  margin: 0;
   color: var(--moss);
   font-size: 13px;
   font-weight: 650;
 }
+
+/* 저장은 카드를 넘기지 않는 토글입니다. */
+.feed-save {
+  flex: none;
+  min-height: 36px;
+  padding: 6px 14px;
+  border: 1px solid var(--field-line);
+  border-radius: 999px;
+  color: var(--soft-text);
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.feed-save:hover:not(:disabled) { border-color: var(--leaf); color: var(--pine); }
+
+.feed-save.is-saved {
+  border-color: var(--pine);
+  color: #fff;
+  background: var(--pine);
+}
+
+.feed-save.is-saved:hover:not(:disabled) { border-color: var(--pine-deep); color: #fff; background: var(--pine-deep); }
 
 .feed-card-tag {
   padding: 3px 9px;
@@ -105,6 +136,12 @@
   font-size: 16px;
   line-height: 1.75;
   word-break: keep-all;
+}
+
+.feed-card-majors {
+  margin: -8px 0 22px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
 }
 
 .feed-reactions {
@@ -138,14 +175,6 @@
 .feed-options { display: grid; gap: 10px; }
 .feed-option { text-align: left; line-height: 1.5; word-break: keep-all; }
 
-.feed-card-foot {
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  margin-top: 10px;
-}
-
-.feed-text-button,
 .feed-secondary {
   min-height: 44px;
   padding: 8px 14px;
@@ -155,8 +184,6 @@
   background: transparent;
   font-size: 14px;
 }
-
-.feed-text-button:hover:not(:disabled) { background: var(--mist); }
 
 button:disabled { cursor: progress; opacity: 0.65; }
 
@@ -198,5 +225,5 @@ button:disabled { cursor: progress; opacity: 0.65; }
 .feed-secondary:hover { background: var(--mist); }
 
 @media (max-width: 480px) {
-  .feed-card { padding: 22px 20px 14px; border-radius: 20px; }
+  .feed-card { padding: 22px 20px 20px; border-radius: 20px; }
 }

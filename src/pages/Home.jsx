@@ -2,12 +2,10 @@ import { useCallback, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { ApiError, errorMessage } from '../api/client.js'
 import { getMe } from '../api/me.js'
-import AppHeader from '../components/AppHeader.jsx'
+import AppLayout from '../components/AppLayout.jsx'
 import FeedDeck from '../components/FeedDeck.jsx'
-import MockNotice from '../components/MockNotice.jsx'
 import PageStatus from '../components/PageStatus.jsx'
 import ProfileSummary from '../components/ProfileSummary.jsx'
-import './Home.css'
 
 export default function Home() {
   const [me, setMe] = useState(null)
@@ -59,13 +57,9 @@ export default function Home() {
   }
 
   return (
-    <div className="home">
-      <AppHeader />
-      <main>
-        <ProfileSummary me={me} />
-        <FeedDeck onReacted={refreshMe} />
-      </main>
-      <MockNotice />
-    </div>
+    <AppLayout>
+      <ProfileSummary me={me} />
+      <FeedDeck onReacted={refreshMe} />
+    </AppLayout>
   )
 }

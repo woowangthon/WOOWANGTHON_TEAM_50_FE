@@ -5,6 +5,8 @@ import RequireInterestSurvey from './auth/RequireInterestSurvey.jsx'
 import Home from './pages/Home.jsx'
 import Login from './pages/Login.jsx'
 import ProfileSetup from './pages/ProfileSetup.jsx'
+import Report from './pages/Report.jsx'
+import Saved from './pages/Saved.jsx'
 import InterestSurvey from './pages/InterestSurvey.jsx'
 
 function App() {
@@ -16,6 +18,8 @@ function App() {
           <Route path="/interests" element={<RequireAuth><InterestSurvey /></RequireAuth>} />
           <Route path="/profile" element={<RequireAuth><RequireInterestSurvey><ProfileSetup /></RequireInterestSurvey></RequireAuth>} />
           <Route path="/home" element={<RequireAuth><RequireInterestSurvey><Home /></RequireInterestSurvey></RequireAuth>} />
+          <Route path="/report" element={<RequireAuth><RequireInterestSurvey><Report /></RequireInterestSurvey></RequireAuth>} />
+          <Route path="/saved" element={<RequireAuth><RequireInterestSurvey><Saved /></RequireInterestSurvey></RequireAuth>} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </BrowserRouter>
