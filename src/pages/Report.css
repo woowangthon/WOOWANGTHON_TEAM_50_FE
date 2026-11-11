@@ -182,6 +182,22 @@
 
 .report-job > p:last-child { margin-bottom: 0; }
 
+.report-job-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: 10px;
+  padding: 8px 14px;
+  border: 1px solid var(--field-line);
+  border-radius: 10px;
+  color: var(--pine);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.report-job-link:hover { border-color: var(--leaf); background: var(--mist); }
+
 /* 반응 기록 */
 .report-counts { margin-top: 32px; }
 

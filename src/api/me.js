@@ -38,3 +38,15 @@ export function unsaveCard(cardId) {
 export function getReport() {
   return USE_MOCK ? mock.getReport() : apiFetch('/me/report')
 }
+
+// 저장한 직업 카드마다 로드맵, 최근 저장 순. 응답: { jobs: [RoadmapJob] } (저장한 직업이 없으면 [])
+export function getRoadmaps() {
+  return USE_MOCK ? mock.getRoadmaps() : apiFetch('/me/roadmap')
+}
+
+// 직업 하나의 로드맵. 저장하지 않은 직업도 볼 수 있습니다. (저장했다면 saved_at이 채워짐)
+// RoadmapJob: { job_id, name, field, summary, majors[], card_id, saved_at, traits[], steps[] }
+// 없는 직업이면 ApiError(404, 'job_not_found')
+export function getRoadmap(jobId) {
+  return USE_MOCK ? mock.getRoadmap(jobId) : apiFetch(`/me/roadmap/${encodeURIComponent(jobId)}`)
+}

@@ -66,7 +66,7 @@ export function saveInterestDraft(userId, answers) {
   writeSurvey(userId, answers)
 }
 
-// 현재 서버에는 설문 API가 없습니다. 서버 연동 시 이 저장 계층을 교체합니다.
+// 완료 여부는 이 브라우저에 기록합니다. 답변의 서버 반영은 InterestSurvey 화면에서 POST /interest-survey로 먼저 보냅니다.
 export function completeInterestSurvey(userId, answers) {
   if (firstUnanswered(answers)) throw new Error('모든 질문에 답해주세요.')
   writeSurvey(userId, answers, new Date().toISOString())

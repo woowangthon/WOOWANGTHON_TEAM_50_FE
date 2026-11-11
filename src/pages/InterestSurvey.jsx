@@ -1,10 +1,13 @@
 import { useEffect, useRef, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { errorMessage } from '../api/client.js'
+import { submitInterestSurvey } from '../api/interestSurvey.js'
 import { useAuth } from '../auth/AuthContext.js'
 import AppHeader from '../components/AppHeader.jsx'
 import {
   INTEREST_OPTIONS,
   INTEREST_QUESTIONS,
+  SURVEY_VERSION,
   completeInterestSurvey,
   firstUnanswered,
   getInterestSurvey,
@@ -32,6 +35,7 @@ function SurveyForm({ userId }) {
   })
   const [missingId, setMissingId] = useState(null)
   const [message, setMessage] = useState('')
+  const [submitting, setSubmitting] = useState(false)
   const headingRef = useRef(null)
   const questionRefs = useRef({})
   const questions = INTEREST_QUESTIONS.slice(step * PAGE_SIZE, (step + 1) * PAGE_SIZE)
@@ -61,8 +65,9 @@ function SurveyForm({ userId }) {
     }
   }
 
-  function handleSubmit(event) {
+  async function handleSubmit(event) {
     event.preventDefault()
+    if (submitting) return
     const missing = step === PAGE_COUNT - 1
       ? firstUnanswered(answers)
       : questions.find(({ id }) => !answers[id])
@@ -80,11 +85,22 @@ function SurveyForm({ userId }) {
       setStep(step + 1)
       return
     }
+    // 서버에 먼저 보내 흥미 점수에 반영하고, 성공하면 이 브라우저에도 완료로 기록합니다.
+    setSubmitting(true)
+    setMessage('')
+    try {
+      await submitInterestSurvey({ version: SURVEY_VERSION, answers })
+    } catch (error) {
+      setMessage(errorMessage(error))
+      setSubmitting(false)
+      return
+    }
     try {
       completeInterestSurvey(userId, answers)
       navigate(destination, { replace: true })
     } catch (error) {
       setMessage(error.message)
+      setSubmitting(false)
     }
   }
 
@@ -153,12 +169,12 @@ function SurveyForm({ userId }) {
                 setStep(step - 1)
               }}
             >이전</button>
-            <button type="submit" className="interest-next">
-              {step === PAGE_COUNT - 1 ? '답변 저장하고 계속하기' : '다음으로'}
+            <button type="submit" className="interest-next" disabled={submitting}>
+              {submitting ? '저장하는 중…' : step === PAGE_COUNT - 1 ? '답변 저장하고 계속하기' : '다음으로'}
               <span aria-hidden="true">→</span>
             </button>
           </div>
-          <p className="interest-note">답변은 이 브라우저에 계정별로 저장돼요. 중간에 나갔다 와도 이어서 할 수 있어요.</p>
+          <p className="interest-note">중간에 나갔다 와도 이어서 할 수 있어요. 마지막에 저장하면 내 카드 추천에 반영돼요.</p>
         </form>
       </main>
     </div>

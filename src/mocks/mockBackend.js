@@ -3,6 +3,7 @@
 import { makeError } from '../api/client.js'
 import { readJSON, writeJSON } from '../lib/storage.js'
 import { ATTRIBUTES, CARDS, INTEREST_PHRASES, JOBS, STRENGTH_PHRASES, STUDY_TIPS } from './data.js'
+import { GUIDES } from './guides.js'
 
 const SESSION_KEY = 'findme-mock-session'
 const WEIGHTS = { save: 1.5, like: 1, choose: 1, pass: 0, dislike: -0.5 }
@@ -282,4 +283,115 @@ export async function getReport() {
     jobs: pool.slice(0, 5),
     majors: Object.entries(weight).sort((a, b) => b[1] - a[1]).slice(0, 5).map(([major]) => major),
   }
+}
+
+// ---------- 관심사 설문 (POST /interest-survey) ----------
+// 백엔드 app/interest_survey.py와 같은 계산: 답 하나가 해당 흥미 축을 단계값 × 0.125만큼 바꿉니다.
+const SURVEY_SCORES = { strongly_dislike: -2, dislike: -1, neutral: 0, like: 1, strongly_like: 2 }
+const SURVEY_AXES = {
+  make: 'R', repair: 'R', experiment: 'I', patterns: 'I', stories: 'A', design: 'A',
+  explain: 'S', support: 'S', invite: 'E', coordinate: 'E', organize: 'C', checklist: 'C',
+}
+
+export async function submitInterestSurvey({ version, answers }) {
+  await wait()
+  const user = currentUser()
+  const state = loadState(user.id)
+  const ids = Object.keys(SURVEY_AXES)
+  const valid = version === 1
+    && Object.keys(answers).length === ids.length
+    && ids.every((id) => answers[id] in SURVEY_SCORES)
+  if (!valid) throw makeError(422, 'invalid_survey')
+  if (state.survey) return { status: 'duplicate' }
+
+  state.vector = state.vector.map((u, i) => {
+    const code = ATTRIBUTES[i].code
+    const delta = ids.filter((id) => SURVEY_AXES[id] === code).reduce((sum, id) => sum + SURVEY_SCORES[answers[id]] * 0.125, 0)
+    return Math.min(1, Math.max(0, u + delta))
+  })
+  state.survey = { version, answers }
+  writeJSON(stateKey(user.id), state)
+  return { status: 'recorded' }
+}
+
+// ---------- 로드맵 (GET /me/roadmap, GET /me/roadmap/{job_id}) ----------
+// 백엔드 app/roadmap.py를 단순하게 옮겼습니다. 문장은 모두 커리어넷 원문입니다.
+const STEP_TITLES = {
+  explore: '지금 해 볼 수 있는 일',
+  grow: '키워 볼 능력',
+  study: '진학 준비',
+  career: '자격과 진출',
+}
+
+function growItems(guide) {
+  const used = new Set()
+  const items = guide.abilities.map((ability) => {
+    const sentence = guide.aptitudes.find((s) => s.includes(ability) && !used.has(s))
+    if (sentence) used.add(sentence)
+    return { title: ability, detail: sentence || `${josa(ability, '이', '가')} 필요해요.` }
+  })
+  return [...items, ...guide.aptitudes.filter((s) => !used.has(s)).map((detail) => ({ title: null, detail }))]
+}
+
+function buildRoadmap(jobId, vector, savedAt = null) {
+  const job = JOBS[jobId]
+  if (!job) return null
+  const guide = GUIDES[jobId]
+  const card = CARDS.find((c) => c.job_id === jobId)
+  const traits = card
+    ? ATTRIBUTES.map((a, idx) => ({ ...a, idx }))
+      .filter((a) => card.attrs[a.idx] > 0)
+      .sort((a, b) => card.attrs[b.idx] - card.attrs[a.idx] || a.idx - b.idx)
+      .map((a) => ({ code: a.code, label: a.label, group: a.group, job_score: card.attrs[a.idx], my_score: vector[a.idx] }))
+    : []
+
+  const study = guide ? guide.education.map((detail) => ({ title: null, detail })) : []
+  if (job.majors.length) study.push({ title: '관련 학과', detail: job.majors.join(', ') })
+  const items = {
+    explore: guide ? guide.activities : [],
+    grow: guide ? growItems(guide) : [],
+    study,
+    career: guide
+      ? [...guide.certificates.map((detail) => ({ title: '자격증', detail })), ...guide.careers.map((detail) => ({ title: '진출 분야', detail }))]
+      : [],
+  }
+
+  return {
+    job_id: jobId,
+    name: job.name,
+    field: job.field,
+    summary: job.summary,
+    majors: job.majors,
+    card_id: card ? card.card_id : null,
+    saved_at: savedAt,
+    traits,
+    steps: Object.entries(items).filter(([, list]) => list.length).map(([key, list]) => ({ key, title: STEP_TITLES[key], items: list })),
+  }
+}
+
+function savedJobs(state) {
+  const jobs = new Map()
+  Object.entries(state.saved || {})
+    .sort((a, b) => b[1].localeCompare(a[1]))
+    .forEach(([cardId, savedAt]) => {
+      const jobId = findCard(cardId)?.job_id
+      if (jobId && !jobs.has(jobId)) jobs.set(jobId, savedAt)
+    })
+  return jobs
+}
+
+export async function getRoadmaps() {
+  await wait()
+  const user = currentUser()
+  const state = loadState(user.id)
+  return { jobs: [...savedJobs(state)].map(([jobId, savedAt]) => buildRoadmap(jobId, state.vector, savedAt)) }
+}
+
+export async function getRoadmap(jobId) {
+  await wait()
+  const user = currentUser()
+  const state = loadState(user.id)
+  const roadmap = buildRoadmap(Number(jobId), state.vector, savedJobs(state).get(Number(jobId)) || null)
+  if (!roadmap) throw makeError(404, 'job_not_found')
+  return roadmap
 }

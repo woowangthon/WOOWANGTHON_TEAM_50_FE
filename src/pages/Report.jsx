@@ -75,6 +75,9 @@ function ReadyReport({ report }) {
                 </div>
                 {job.summary && <p>{job.summary}</p>}
                 <MajorList majors={job.majors} />
+                <Link to={`/roadmap/${job.job_id}`} state={{ from: '/report' }} className="report-job-link">
+                  {job.name} 로드맵 보기
+                </Link>
               </li>
             ))}
           </ol>

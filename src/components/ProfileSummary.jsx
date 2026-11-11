@@ -36,7 +36,8 @@ export default function ProfileSummary({ me }) {
         <Link to="/profile" className="profile-edit">프로필 수정</Link>
       </div>
 
-      {me.n_reactions === 0 ? (
+      {/* 관심사 설문만 해도 점수가 생기므로, 반응 수가 아니라 점수 유무로 나눕니다. */}
+      {topTraits.length === 0 && me.n_reactions === 0 ? (
         <p className="profile-summary-empty">
           아래 카드에 반응할수록 내가 끌리는 분야가 여기에 쌓여요.
         </p>

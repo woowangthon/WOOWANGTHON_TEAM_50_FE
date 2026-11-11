@@ -63,3 +63,19 @@
 }
 
 .saved-body:last-child { margin-bottom: 0; }
+
+.saved-roadmap-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: 14px;
+  padding: 8px 14px;
+  border-radius: 10px;
+  color: #fff;
+  background: var(--pine);
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.saved-roadmap-link:hover { background: var(--pine-deep); }
