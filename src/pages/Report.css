@@ -198,6 +198,19 @@
 
 .report-job-link:hover { border-color: var(--leaf); background: var(--mist); }
 
+.report-job-match { margin: 2px 0 10px; }
+
+.report-more-jobs {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  margin-top: 10px;
+  color: var(--pine);
+  font-size: 14px;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
 /* 반응 기록 */
 .report-counts { margin-top: 32px; }
 

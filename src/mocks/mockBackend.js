@@ -1,14 +1,21 @@
 // 백엔드 없이 화면을 확인하기 위한 가짜 서버입니다.
-// 응답 형식은 백엔드의 /me, /me/saved, /me/report, /feed, /reactions와 같게 맞췄고, 데이터는 브라우저에만 저장됩니다.
+// 응답 형식은 백엔드의 /me, /me/saved, /me/report, /me/journey, /feed, /reactions, /jobs와 같게 맞췄고,
+// 데이터는 브라우저에만 저장됩니다.
 import { makeError } from '../api/client.js'
 import { readJSON, writeJSON } from '../lib/storage.js'
-import { ATTRIBUTES, CARDS, INTEREST_PHRASES, JOBS, STRENGTH_PHRASES, STUDY_TIPS } from './data.js'
+import {
+  ATTRIBUTE_DEFINITIONS, ATTRIBUTES, CARDS, DEFAULT_MISSIONS, INTEREST_PHRASES, JOBS, LEVELS, MISSIONS,
+  PERSONA_ADJ, PERSONA_NOUN, PERSONA_TAGLINE, STRENGTH_PHRASES, STUDY_TIPS,
+} from './data.js'
 import { GUIDES } from './guides.js'
 
 const SESSION_KEY = 'findme-mock-session'
 const WEIGHTS = { save: 1.5, like: 1, choose: 1, pass: 0, dislike: -0.5 }
 const ALPHA = 0.2
 const REACTIONS = ['like', 'dislike', 'save', 'pass', 'choose']
+const DAILY_GOAL = 5
+const MIN_GAIN = 0.005
+const DAY_MS = 24 * 60 * 60 * 1000
 
 const wait = (ms = 250) => new Promise((resolve) => setTimeout(resolve, ms))
 const listeners = new Set()
@@ -113,6 +120,7 @@ function cardFields(card) {
     type: card.type,
     title: card.title,
     body: card.body,
+    job_id: job ? card.job_id : null,
     job_name: job ? job.name : null,
     majors: job ? job.majors : [],
     options: card.options.map(({ id, label }) => ({ id, label })),
@@ -140,13 +148,35 @@ export async function getFeed(n = 10) {
   writeJSON(stateKey(user.id), state)
   const saved = state.saved || {}
   return {
-    cards: items.map((i) => ({
-      impression_id: i.id,
-      source: i.source,
-      saved: Boolean(saved[i.card_id]),
-      ...cardFields(findCard(i.card_id)),
-    })),
+    cards: items.map((i) => {
+      const card = findCard(i.card_id)
+      return {
+        impression_id: i.id,
+        source: i.source,
+        saved: Boolean(saved[i.card_id]),
+        reason: cardReason(card, state.vector, i.source),
+        ...cardFields(card),
+      }
+    }),
   }
+}
+
+// 백엔드 app/journey.py card_reason: 내 성향과 카드가 함께 높은 축으로 '왜 이 카드?' 한 줄을 만듭니다.
+function cardReason(card, vector, source) {
+  if (source === 'random') return '평소와 다른 분야예요. 의외로 잘 맞을지도 몰라요.'
+  if (source !== 'personalized') return null
+  const overlap = card.attrs.map((x, i) => (x / 3) * vector[i])
+  const best = overlap.indexOf(Math.max(...overlap))
+  return overlap[best] > 0 ? `'${ATTRIBUTES[best].label}' 쪽 카드에 자주 끌려서 골랐어요.` : null
+}
+
+// 이번 반응으로 가장 많이 오른 성향 최대 k개. delta는 퍼센트 포인트입니다.
+function gainsOf(before, after, k = 2) {
+  return ATTRIBUTES.map((a, i) => ({ ...a, diff: after[i] - before[i] }))
+    .filter((a) => a.diff > MIN_GAIN)
+    .sort((a, b) => b.diff - a.diff)
+    .slice(0, k)
+    .map((a) => ({ code: a.code, label: a.label, delta: Math.max(1, Math.round(a.diff * 100)) }))
 }
 
 export async function postReaction({ impression_id, reaction, option_id = null }) {
@@ -155,15 +185,18 @@ export async function postReaction({ impression_id, reaction, option_id = null }
   const state = loadState(user.id)
   const impression = state.impressions.find((i) => i.id === impression_id)
   if (!impression) throw makeError(404, 'impression_not_found')
-  if (impression.reaction || impression.reacted) return { status: 'duplicate' }
+  if (impression.reaction || impression.reacted) {
+    return { status: 'duplicate', gains: [], daily_goal: DAILY_GOAL, goal_reached: false, ...activity(state) }
+  }
 
   const card = findCard(impression.card_id)
   const source = reaction === 'choose' ? card.options.find((o) => o.id === option_id) : card
   if (!source) throw makeError(422, 'invalid_reaction')
 
+  const before = state.vector
   const target = source.attrs.map((x) => x / 3)
   const w = WEIGHTS[reaction]
-  state.vector = state.vector.map((u, i) => {
+  state.vector = before.map((u, i) => {
     const next = w > 0 ? u + Math.min(ALPHA * w, 1) * (target[i] - u) : w < 0 ? u - ALPHA * -w * target[i] : u
     return Math.min(1, Math.max(0, next))
   })
@@ -171,7 +204,16 @@ export async function postReaction({ impression_id, reaction, option_id = null }
   impression.reaction = reaction
   impression.reacted_at = new Date().toISOString()
   writeJSON(stateKey(user.id), state)
-  return { status: 'recorded' }
+
+  const { streak, today_count } = activity(state)
+  return {
+    status: 'recorded',
+    gains: gainsOf(before, state.vector),
+    today_count,
+    daily_goal: DAILY_GOAL,
+    streak,
+    goal_reached: today_count === DAILY_GOAL,
+  }
 }
 
 function reactionsOf(state) {
@@ -180,7 +222,32 @@ function reactionsOf(state) {
     .sort((a, b) => b.reacted_at.localeCompare(a.reacted_at))
 }
 
-// 저장은 반응과 별개인 북마크입니다. (백엔드에 요청한 PUT·DELETE /me/saved/{card_id}를 흉내 냅니다)
+function reactionCounts(reactions) {
+  return Object.fromEntries(REACTIONS.map((r) => [r, reactions.filter((i) => i.reaction === r).length]))
+}
+
+// 리포트는 성향을 만드는 반응(끌려요·선택형 답)이 1개 이상이고 성향이 0이 아닐 때 열립니다. 저장은 세지 않습니다.
+const reportReady = (counts, vector) => counts.like + counts.choose >= 1 && vector.some((x) => x > 0)
+
+// ---------- 날짜 (한국 시간) ----------
+const kstDay = (time) => new Date(new Date(time).getTime() + 9 * 60 * 60 * 1000).toISOString().slice(0, 10)
+const previousDay = (day) => new Date(Date.parse(day) - DAY_MS).toISOString().slice(0, 10)
+
+// (연속 접속 일수, 오늘 반응 수). 오늘 아직 안 했어도 어제까지 이어졌으면 연속은 유지됩니다.
+function activity(state, now = Date.now()) {
+  const days = reactionsOf(state).map((i) => kstDay(i.reacted_at))
+  const active = new Set(days)
+  const today = kstDay(now)
+  let cursor = active.has(today) ? today : previousDay(today)
+  let streak = 0
+  while (active.has(cursor)) {
+    streak += 1
+    cursor = previousDay(cursor)
+  }
+  return { streak, today_count: days.filter((day) => day === today).length }
+}
+
+// 저장은 반응과 별개인 북마크입니다. (PUT·DELETE /me/saved/{card_id})
 export async function getSaved() {
   await wait()
   const user = currentUser()
@@ -239,13 +306,12 @@ export async function getReport() {
   const user = currentUser()
   const state = loadState(user.id)
   const reactions = reactionsOf(state)
-  const counts = Object.fromEntries(REACTIONS.map((r) => [r, reactions.filter((i) => i.reaction === r).length]))
+  const counts = reactionCounts(reactions)
   const vector = state.vector
   const base = { n_reactions: state.n_reactions, traits: traitsOf(vector), reaction_counts: counts }
   const empty = { top_interests: [], strengths: [], summary: '', summary_by_ai: false, study_tips: [], jobs: [], majors: [] }
 
-  // 백엔드에 요청한 규칙: 최소 개수 없이, 끌려요가 1개 이상이면 리포트를 엽니다.
-  if (counts.like < 1 || !vector.some((x) => x > 0)) {
+  if (!reportReady(counts, vector)) {
     return { ...base, ...empty, ready: false, remaining: 1 }
   }
 
@@ -253,7 +319,10 @@ export async function getReport() {
   const interests = topAttrs(vector, ['interest'], 2)
   const strengths = topAttrs(vector, ['style', 'value'], 2)
   const pool = CARDS.filter((c) => c.job_id && !disliked.has(c.job_id))
-    .map((c) => ({ job_id: c.job_id, ...JOBS[c.job_id], score: Number(cosine(c.attrs, vector).toFixed(3)) }))
+    .map((c) => {
+      const score = Number(cosine(c.attrs, vector).toFixed(3))
+      return { job_id: c.job_id, ...JOBS[c.job_id], score, match: Math.round(score * 100) }
+    })
     .sort((a, b) => b.score - a.score)
     .slice(0, 10)
 
@@ -314,8 +383,29 @@ export async function submitInterestSurvey({ version, answers }) {
   return { status: 'recorded' }
 }
 
-// ---------- 로드맵 (GET /me/roadmap, GET /me/roadmap/{job_id}) ----------
-// 백엔드 app/roadmap.py를 단순하게 옮겼습니다. 문장은 모두 커리어넷 원문입니다.
+// ---------- 직업 (GET /jobs, GET /jobs/{job_id}) ----------
+// 백엔드 app/jobs.py를 단순하게 옮겼습니다. 백엔드는 직업 552개를 job_tags.csv 점수로 쓰고,
+// 목업은 직업 카드가 있는 직업만 카드 점수(0~3)를 0~1로 바꿔 씁니다.
+const JOB_VECTORS = new Map()
+for (const card of CARDS) {
+  if (card.job_id && JOBS[card.job_id] && !JOB_VECTORS.has(card.job_id)) {
+    JOB_VECTORS.set(card.job_id, card.attrs.map((x) => x / 3))
+  }
+}
+const N_SIMILAR = 4
+
+// 적합도(0~100): 내 성향과 직업 점수의 코사인 유사도 × 100. 성향이 아직 없으면 null.
+function matchOf(jobVector, vector) {
+  if (!vector.some((x) => x > 0)) return null
+  return Math.round(Math.min(1, Math.max(0, cosine(jobVector, vector))) * 100)
+}
+
+function jobSummary(jobId, vector) {
+  const job = JOBS[jobId]
+  return { job_id: jobId, name: job.name, field: job.field, summary: job.summary, match: matchOf(JOB_VECTORS.get(jobId), vector) }
+}
+
+// 준비 단계는 백엔드 app/roadmap.py와 같은 순서입니다. 문장은 모두 커리어넷 원문입니다.
 const STEP_TITLES = {
   explore: '지금 해 볼 수 있는 일',
   grow: '키워 볼 능력',
@@ -333,18 +423,9 @@ function growItems(guide) {
   return [...items, ...guide.aptitudes.filter((s) => !used.has(s)).map((detail) => ({ title: null, detail }))]
 }
 
-function buildRoadmap(jobId, vector, savedAt = null) {
+function buildSteps(jobId) {
   const job = JOBS[jobId]
-  if (!job) return null
   const guide = GUIDES[jobId]
-  const card = CARDS.find((c) => c.job_id === jobId)
-  const traits = card
-    ? ATTRIBUTES.map((a, idx) => ({ ...a, idx }))
-      .filter((a) => card.attrs[a.idx] > 0)
-      .sort((a, b) => card.attrs[b.idx] - card.attrs[a.idx] || a.idx - b.idx)
-      .map((a) => ({ code: a.code, label: a.label, group: a.group, job_score: card.attrs[a.idx], my_score: vector[a.idx] }))
-    : []
-
   const study = guide ? guide.education.map((detail) => ({ title: null, detail })) : []
   if (job.majors.length) study.push({ title: '관련 학과', detail: job.majors.join(', ') })
   const items = {
@@ -355,43 +436,127 @@ function buildRoadmap(jobId, vector, savedAt = null) {
       ? [...guide.certificates.map((detail) => ({ title: '자격증', detail })), ...guide.careers.map((detail) => ({ title: '진출 분야', detail }))]
       : [],
   }
+  return Object.entries(items).filter(([, list]) => list.length).map(([key, list]) => ({ key, title: STEP_TITLES[key], items: list }))
+}
+
+export async function getJobs({ field = null, limit = 30 } = {}) {
+  await wait()
+  const user = currentUser()
+  const { vector } = loadState(user.id)
+  const ids = [...JOB_VECTORS.keys()]
+  const fields = [...new Set(ids.map((id) => JOBS[id].field).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'ko'))
+  const jobs = ids
+    .filter((id) => !field || JOBS[id].field === field)
+    .map((id) => jobSummary(id, vector))
+    .sort((a, b) => (b.match ?? 0) - (a.match ?? 0) || a.job_id - b.job_id)
+  return { fields, jobs: jobs.slice(0, limit) }
+}
+
+export async function getJob(jobId) {
+  await wait()
+  const user = currentUser()
+  const { vector } = loadState(user.id)
+  const id = Number(jobId)
+  const jobVector = JOB_VECTORS.get(id)
+  if (!jobVector) throw makeError(404, 'job_not_found')
+
+  const job = JOBS[id]
+  const traits = ATTRIBUTES.map((a, idx) => ({ ...a, idx }))
+    .filter((a) => jobVector[a.idx] > 0)
+    .sort((a, b) => jobVector[b.idx] - jobVector[a.idx] || a.idx - b.idx)
+    .map((a) => ({
+      code: a.code,
+      label: a.label,
+      group: a.group,
+      definition: ATTRIBUTE_DEFINITIONS[a.code],
+      level: Math.round(jobVector[a.idx] * 3),
+      mine: Math.round(vector[a.idx] * 100),
+    }))
+  const similar = [...JOB_VECTORS.entries()]
+    .filter(([other]) => other !== id)
+    .map(([other, v]) => ({ other, sim: cosine(jobVector, v) }))
+    .sort((a, b) => b.sim - a.sim || a.other - b.other)
+    .slice(0, N_SIMILAR)
+    .map(({ other }) => jobSummary(other, vector))
 
   return {
-    job_id: jobId,
+    job_id: id,
     name: job.name,
     field: job.field,
     summary: job.summary,
     majors: job.majors,
-    card_id: card ? card.card_id : null,
-    saved_at: savedAt,
+    match: matchOf(jobVector, vector),
     traits,
-    steps: Object.entries(items).filter(([, list]) => list.length).map(([key, list]) => ({ key, title: STEP_TITLES[key], items: list })),
+    steps: buildSteps(id),
+    similar,
   }
 }
 
-function savedJobs(state) {
-  const jobs = new Map()
-  Object.entries(state.saved || {})
-    .sort((a, b) => b[1].localeCompare(a[1]))
-    .forEach(([cardId, savedAt]) => {
-      const jobId = findCard(cardId)?.job_id
-      if (jobId && !jobs.has(jobId)) jobs.set(jobId, savedAt)
-    })
-  return jobs
+// ---------- 여정 (GET /me/journey) ----------
+// 백엔드 app/journey.py를 옮겼습니다. 전부 반응 기록과 성향 점수에서 계산합니다.
+function levelOf(n) {
+  const idx = LEVELS.findLastIndex(([need]) => n >= need)
+  const base = LEVELS[idx][0]
+  const nextAt = idx + 1 < LEVELS.length ? LEVELS[idx + 1][0] : null
+  const progress = nextAt === null ? 1 : (n - base) / (nextAt - base)
+  return { n: idx + 1, name: LEVELS[idx][1], next_at: nextAt, progress: Number(progress.toFixed(3)) }
 }
 
-export async function getRoadmaps() {
+function personaOf(tops) {
+  if (!tops.length) return null
+  const first = tops[0].code
+  return {
+    code: tops.map((a) => a.code).join(''),
+    name: tops.length === 1 ? PERSONA_NOUN[first] : `${PERSONA_ADJ[tops[1].code]} ${PERSONA_NOUN[first]}`,
+    tagline: PERSONA_TAGLINE[first],
+    labels: tops.map((a) => a.label),
+  }
+}
+
+// 가장 끌린 흥미 유형에 맞춰 날짜마다 바뀝니다. 같은 날에는 같은 미션입니다.
+function missionOf(top, today) {
+  const pool = top ? MISSIONS[top.code] : DEFAULT_MISSIONS
+  return {
+    id: `${today}-${top ? top.code : 'start'}`,
+    text: pool[Math.floor(Date.parse(today) / DAY_MS) % pool.length],
+    trait: top ? top.label : null,
+  }
+}
+
+function badgesOf(state, reactions, streak, ready) {
+  const count = (kind) => reactions.filter((i) => i.reaction === kind).length
+  const fields = new Set(reactions.map((i) => JOBS[findCard(i.card_id)?.job_id]?.field).filter(Boolean))
+  const rules = [
+    ['first_step', '첫 발자국', '첫 카드에 반응했어요', reactions.length >= 1],
+    // 저장은 반응이 아니므로 저장 목록 개수로 셉니다. (#15 머지 후 백엔드도 saved_cards 기준으로 맞추기로 함)
+    ['collector', '수집가', '카드를 3장 저장했어요', Object.keys(state.saved || {}).length >= 3],
+    ['decider', '결정 장인', '선택형 카드에 5번 답했어요', count('choose') >= 5],
+    ['explorer', '분야 탐험가', '5개 분야의 직업을 살펴봤어요', fields.size >= 5],
+    ['streak3', '3일 연속', '3일 연속으로 탐색했어요', streak >= 3],
+    ['streak7', '일주일 연속', '7일 연속으로 탐색했어요', streak >= 7],
+    ['report', '나를 발견', '성향 리포트를 열었어요', ready],
+  ]
+  return rules.map(([id, name, description, earned]) => ({ id, name, description, earned: Boolean(earned) }))
+}
+
+export async function getJourney() {
   await wait()
   const user = currentUser()
   const state = loadState(user.id)
-  return { jobs: [...savedJobs(state)].map(([jobId, savedAt]) => buildRoadmap(jobId, state.vector, savedAt)) }
-}
-
-export async function getRoadmap(jobId) {
-  await wait()
-  const user = currentUser()
-  const state = loadState(user.id)
-  const roadmap = buildRoadmap(Number(jobId), state.vector, savedJobs(state).get(Number(jobId)) || null)
-  if (!roadmap) throw makeError(404, 'job_not_found')
-  return roadmap
+  const reactions = reactionsOf(state)
+  const { streak, today_count } = activity(state)
+  const ready = reportReady(reactionCounts(reactions), state.vector)
+  const tops = topAttrs(state.vector, ['interest'], 2)
+  return {
+    streak,
+    today_count,
+    daily_goal: DAILY_GOAL,
+    n_reactions: state.n_reactions,
+    level: levelOf(state.n_reactions),
+    persona: personaOf(tops),
+    report_ready: ready,
+    report_remaining: ready ? 0 : 1,
+    mission: missionOf(tops[0], kstDay(Date.now())),
+    badges: badgesOf(state, reactions, streak, ready),
+  }
 }

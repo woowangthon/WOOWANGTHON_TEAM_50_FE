@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { errorMessage } from '../api/client.js'
-import { getRoadmaps, getSaved, unsaveCard } from '../api/me.js'
+import { getSaved, unsaveCard } from '../api/me.js'
 import AppLayout from '../components/AppLayout.jsx'
 import MajorList from '../components/MajorList.jsx'
 import './Saved.css'
@@ -16,7 +16,6 @@ function formatDate(value) {
 
 export default function Saved() {
   const [cards, setCards] = useState([])
-  const [jobIds, setJobIds] = useState({}) // card_id → job_id (로드맵 링크용)
   const [status, setStatus] = useState('loading') // loading | ready | error
   const [loadError, setLoadError] = useState('')
   const [reloadKey, setReloadKey] = useState(0)
@@ -40,13 +39,10 @@ export default function Saved() {
 
   useEffect(() => {
     let active = true
-    // 저장 목록에는 job_id가 없어서, 로드맵 목록(GET /me/roadmap)의 card_id로 직업을 찾습니다.
-    // 로드맵을 못 불러와도 저장 목록은 보여 줍니다.
-    Promise.all([getSaved(), getRoadmaps().catch(() => ({ jobs: [] }))]).then(
-      ([saved, roadmaps]) => {
+    getSaved().then(
+      (saved) => {
         if (!active) return
         setCards(saved.cards)
-        setJobIds(Object.fromEntries(roadmaps.jobs.filter((j) => j.card_id).map((j) => [j.card_id, j.job_id])))
         setStatus('ready')
       },
       (error) => {
@@ -116,9 +112,9 @@ export default function Saved() {
                 <h2 id={`saved-${card.card_id}`}>{card.title}</h2>
                 <p className="saved-body">{card.body}</p>
                 <MajorList majors={card.majors} />
-                {jobIds[card.card_id] && (
-                  <Link to={`/roadmap/${jobIds[card.card_id]}`} state={{ from: '/saved' }} className="saved-roadmap-link">
-                    {card.job_name} 로드맵 보기
+                {card.job_id && (
+                  <Link to={`/jobs/${card.job_id}`} state={{ from: '/saved' }} className="saved-roadmap-link">
+                    {card.job_name ? `${card.job_name} 자세히 보기` : '직업 자세히 보기'}
                   </Link>
                 )}
               </article>

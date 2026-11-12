@@ -22,6 +22,104 @@
   font-variant-numeric: tabular-nums;
 }
 
+.feed-streak {
+  margin: 0;
+  padding: 4px 11px;
+  border-radius: 999px;
+  color: var(--pine);
+  background: var(--dew);
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+
+/* 오늘 목표 진행도 */
+.feed-today { margin: -4px 0 14px; }
+
+.feed-today p {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 6px;
+  color: var(--soft-text);
+  font-size: 13px;
+}
+
+.feed-today strong {
+  color: var(--ink);
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.feed-today-track {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--mist);
+}
+
+.feed-today-track > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--leaf);
+  transition: width 0.4s ease;
+}
+
+.feed-today.is-reached p { color: var(--pine); font-weight: 600; }
+.feed-today.is-reached .feed-today-track > span { background: var(--pine); }
+
+/* 반응 직후 피드백 */
+.feed-feedback {
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: var(--mist);
+  animation: feedback-in 0.24s ease-out;
+}
+
+@keyframes feedback-in {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: none; }
+}
+
+.feed-feedback-line {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0;
+  color: var(--soft-text);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.feed-gains { display: inline-flex; flex-wrap: wrap; gap: 6px; }
+
+.feed-gain {
+  padding: 2px 9px;
+  border-radius: 999px;
+  color: var(--pine-deep);
+  background: var(--paper);
+  font-size: 12px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.feed-feedback.is-goal { background: var(--pine); }
+.feed-feedback.is-goal .feed-feedback-line { color: #cfe3d8; }
+
+.feed-feedback-goal {
+  margin: 0 0 6px;
+  color: #fff;
+  font-size: 15px;
+  font-weight: 650;
+  line-height: 1.5;
+}
+
 /* 뒤에 남은 카드가 겹쳐 보이도록 아래쪽에 종이 두 장을 깝니다. */
 .feed-stack {
   position: relative;
@@ -138,11 +236,39 @@
   word-break: keep-all;
 }
 
+.feed-card-reason {
+  margin: -10px 0 22px;
+  color: var(--soft-text);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.feed-card-reason-label {
+  margin-right: 8px;
+  color: var(--moss);
+  font-weight: 650;
+}
+
 .feed-card-majors {
+  display: grid;
+  justify-items: start;
+  gap: 10px;
   margin: -8px 0 22px;
   padding-top: 14px;
   border-top: 1px solid var(--line);
 }
+
+.feed-card-job {
+  display: inline-flex;
+  align-items: center;
+  min-height: 36px;
+  color: var(--pine);
+  font-size: 14px;
+  font-weight: 600;
+  text-underline-offset: 3px;
+}
+
+.feed-card-job:hover { color: var(--pine-deep); }
 
 .feed-reactions {
   display: grid;
@@ -216,10 +342,55 @@ button:disabled { cursor: progress; opacity: 0.65; }
 }
 
 .feed-secondary {
+  display: inline-flex;
+  align-items: center;
   border: 1px solid var(--field-line);
   color: var(--pine);
   background: var(--paper);
   font-weight: 600;
+  text-decoration: none;
+}
+
+/* 오늘 장수를 다 골랐을 때 */
+.feed-done {
+  display: grid;
+  justify-items: center;
+  gap: 10px;
+  padding: 36px 24px 30px;
+  border: 1px solid var(--line);
+  border-radius: 24px;
+  background: var(--paper);
+  box-shadow: 0 16px 60px #1a42330d;
+  text-align: center;
+  animation: card-in 0.28s ease-out;
+}
+
+.feed-done-title {
+  margin: 0;
+  font-size: 21px;
+  font-weight: 750;
+  letter-spacing: -0.6px;
+  line-height: 1.4;
+}
+
+.feed-done-title:focus { outline: none; }
+.feed-done-title:focus-visible { outline: 3px solid #318974; outline-offset: 4px; border-radius: 4px; }
+
+.feed-done > p {
+  max-width: 26em;
+  margin: 0 0 6px;
+  color: var(--soft-text);
+  font-size: 15px;
+  line-height: 1.65;
+}
+
+.feed-placeholder .feed-placeholder-note { color: var(--muted); font-size: 13px; }
+
+.feed-placeholder-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
 }
 
 .feed-secondary:hover { background: var(--mist); }

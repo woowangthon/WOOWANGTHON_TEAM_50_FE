@@ -19,7 +19,8 @@ function TraitBar({ trait }) {
   )
 }
 
-export default function ProfileSummary({ me }) {
+// persona(성향 유형)와 level은 GET /me/journey에서 옵니다. 못 불러왔으면 생략합니다.
+export default function ProfileSummary({ me, persona, level }) {
   const topTraits = [...me.traits]
     .filter((trait) => trait.score > 0.005)
     .sort((a, b) => b.score - a.score)
@@ -31,10 +32,24 @@ export default function ProfileSummary({ me }) {
         <span className="profile-avatar" aria-hidden="true">{me.nickname.slice(0, 1)}</span>
         <div className="profile-summary-name">
           <h1 id="profile-summary-title">{me.nickname}</h1>
-          <p>{me.grade ? `${me.grade}학년, ` : ''}반응한 카드 {me.n_reactions}장</p>
+          <p>
+            {[level && `Lv.${level.n} ${level.name}`, me.grade && `${me.grade}학년`, `반응한 카드 ${me.n_reactions}장`]
+              .filter(Boolean)
+              .join(' · ')}
+          </p>
         </div>
         <Link to="/profile" className="profile-edit">프로필 수정</Link>
       </div>
+
+      {persona && (
+        <div className="profile-persona">
+          <p className="profile-persona-name">
+            <span className="profile-persona-code">{persona.code}형</span>
+            {persona.name}
+          </p>
+          <p className="profile-persona-tagline">{persona.tagline}</p>
+        </div>
+      )}
 
       {/* 관심사 설문만 해도 점수가 생기므로, 반응 수가 아니라 점수 유무로 나눕니다. */}
       {topTraits.length === 0 && me.n_reactions === 0 ? (

@@ -4,9 +4,10 @@ import { errorMessage } from '../api/client.js'
 import { getReport } from '../api/me.js'
 import AppLayout from '../components/AppLayout.jsx'
 import MajorList from '../components/MajorList.jsx'
+import MatchMeter from '../components/MatchMeter.jsx'
 import './Report.css'
 
-// 리포트는 끌려요 수로만 열립니다. 최소 개수 없이 끌려요를 한 번이라도 누르면 볼 수 있습니다.
+// 리포트는 최소 개수 없이 끌려요나 선택형 답이 1개 이상이면 열립니다. 저장은 세지 않습니다.
 const REACTION_LABELS = [
   ['like', '끌려요'],
   ['dislike', '별로예요'],
@@ -25,8 +26,8 @@ function TraitChips({ traits }) {
 function LockedReport() {
   return (
     <section className="report-locked" aria-labelledby="report-locked-title">
-      <h2 id="report-locked-title">끌려요를 누른 카드가 생기면 리포트가 열려요.</h2>
-      <p>마음이 가는 카드에 끌려요를 눌러 보세요. 많이 누를수록 리포트가 더 정확해져요.</p>
+      <h2 id="report-locked-title">카드 하나에만 반응해도 리포트가 열려요.</h2>
+      <p>마음이 가는 카드에 끌려요를 누르거나 선택형 카드에 답해 보세요. 많이 반응할수록 리포트가 더 정확해져요.</p>
       <Link to="/home" className="report-cta">카드 보러 가기</Link>
     </section>
   )
@@ -65,7 +66,7 @@ function ReadyReport({ report }) {
       {report.jobs.length > 0 && (
         <section className="report-section">
           <h2>어울리는 직업</h2>
-          <p className="report-muted">끌린 카드와 비슷한 순서예요.</p>
+          <p className="report-muted">나와 맞는 정도가 높은 순서예요. 반응이 적을 때는 순서가 자주 바뀔 수 있어요.</p>
           <ol className="report-jobs">
             {report.jobs.map((job) => (
               <li key={job.job_id} className="report-job">
@@ -73,14 +74,20 @@ function ReadyReport({ report }) {
                   <h3>{job.name}</h3>
                   {job.field && <span>{job.field}</span>}
                 </div>
+                {typeof job.match === 'number' && (
+                  <div className="report-job-match">
+                    <MatchMeter match={job.match} />
+                  </div>
+                )}
                 {job.summary && <p>{job.summary}</p>}
                 <MajorList majors={job.majors} />
-                <Link to={`/roadmap/${job.job_id}`} state={{ from: '/report' }} className="report-job-link">
-                  {job.name} 로드맵 보기
+                <Link to={`/jobs/${job.job_id}`} state={{ from: '/report' }} className="report-job-link">
+                  {job.name} 자세히 보기
                 </Link>
               </li>
             ))}
           </ol>
+          <Link to="/jobs" className="report-more-jobs">다른 직업도 둘러보기</Link>
         </section>
       )}
 

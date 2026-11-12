@@ -46,12 +46,17 @@
 
 .app-nav {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 4px;
   margin-top: 14px;
   padding: 4px;
   border-radius: 12px;
   background: var(--mist);
+}
+
+/* 메뉴 4개가 한 줄에 들어가지 않는 좁은 화면에서는 2 × 2로 나눕니다. */
+@media (max-width: 440px) {
+  .app-nav { grid-template-columns: repeat(2, 1fr); }
 }
 
 .app-nav-link {

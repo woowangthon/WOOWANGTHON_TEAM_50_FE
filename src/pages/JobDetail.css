@@ -23,16 +23,6 @@
   font-weight: 600;
 }
 
-.roadmap-saved,
-.roadmap-preview {
-  padding: 3px 10px;
-  border-radius: 999px;
-  font-size: 12px;
-}
-
-.roadmap-saved { color: #fff; background: var(--pine); }
-.roadmap-preview { color: var(--soft-text); background: var(--mist); }
-
 .roadmap-head h1 {
   margin: 0 0 10px;
   font-size: clamp(24px, 6.4vw, 30px);
@@ -47,6 +37,26 @@
   font-size: 15px;
   line-height: 1.7;
 }
+
+.job-majors { margin-top: 14px; }
+
+/* 나와 맞는 정도 */
+.job-match {
+  margin-top: 20px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: var(--dew);
+}
+
+.job-match p {
+  margin: 10px 0 0;
+  color: var(--soft-text);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.job-match p:only-child { margin: 0; font-size: 14px; }
+.job-match a { color: var(--pine); font-weight: 600; text-underline-offset: 3px; }
 
 .roadmap-section {
   margin-top: 28px;
@@ -92,6 +102,14 @@
 }
 
 .roadmap-trait-label { font-size: 14px; }
+
+.roadmap-trait-def {
+  grid-column: 1 / -1;
+  margin: -6px 0 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
 
 .roadmap-bars { display: grid; gap: 4px; }
 
@@ -177,6 +195,37 @@
 
 .roadmap-step strong { color: var(--pine-deep); font-size: 15px; }
 .roadmap-step ul li span { color: #33463f; }
+
+/* 비슷한 직업 */
+.job-similar {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.job-similar-card {
+  display: grid;
+  align-content: start;
+  gap: 4px;
+  height: 100%;
+  padding: 14px 16px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  color: var(--ink);
+  background: var(--paper);
+  text-decoration: none;
+}
+
+.job-similar-card:hover { border-color: var(--leaf); background: var(--mist); }
+.job-similar-card strong { font-size: 15px; font-weight: 700; letter-spacing: -0.3px; }
+.job-similar-field { margin-bottom: 6px; color: var(--muted); font-size: 12px; line-height: 1.4; }
+
+@media (max-width: 380px) {
+  .job-similar { grid-template-columns: 1fr; }
+}
 
 .roadmap-empty,
 .roadmap-source {
