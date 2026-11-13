@@ -1,0 +1,24 @@
+.interest-radar { max-width: 340px; margin: 0 auto; }
+.interest-radar svg { display: block; width: 100%; height: auto; overflow: visible; }
+.interest-radar-grid { fill: none; stroke: var(--graph-grid); stroke-width: 1; }
+.interest-radar-axis { stroke: var(--line); stroke-width: 1; }
+.interest-radar-label { fill: var(--ink); font-size: 13px; font-weight: 650; }
+.interest-radar-code { fill: var(--moss); font-size: 11px; font-weight: 500; }
+.interest-radar-area { fill: var(--olive-wash); stroke: var(--pine); stroke-width: 2; stroke-linejoin: round; }
+.interest-radar-dot { fill: var(--pine); stroke: var(--paper); stroke-width: 1.5; }
+.interest-radar figcaption { color: var(--soft-text); font-size: 12px; line-height: 1.6; text-align: center; }
+.interest-radar figcaption span { display: block; }
+.interest-radar.is-interactive .interest-radar-grid,
+.interest-radar.is-interactive .interest-radar-axis,
+.interest-radar.is-interactive .interest-radar-area,
+.interest-radar.is-interactive .interest-radar-dot { pointer-events: none; }
+.interest-radar-option { cursor: pointer; }
+.interest-radar-sector, .interest-radar-label-target { fill: transparent; stroke: transparent; stroke-width: 2; }
+.interest-radar-option:hover .interest-radar-sector { fill: var(--olive-hover); }
+.interest-radar-option[aria-pressed='true'] .interest-radar-sector { fill: var(--cream); }
+.interest-radar-option[aria-pressed='true'] .interest-radar-label-target { fill: var(--brown); }
+.interest-radar-option[aria-pressed='true'] .interest-radar-label,
+.interest-radar-option[aria-pressed='true'] .interest-radar-code { fill: var(--paper); }
+.interest-radar-option:focus { outline: none; }
+.interest-radar-option:focus-visible .interest-radar-sector,
+.interest-radar-option:focus-visible .interest-radar-label-target { stroke: var(--pine); }

@@ -24,7 +24,7 @@
   cursor: pointer;
 }
 
-.jobs-filter select:focus-visible { outline: 3px solid #318974; outline-offset: 2px; }
+.jobs-filter select:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 2px; }
 
 .jobs-notice {
   margin: 0 0 14px;
@@ -71,7 +71,7 @@
   text-decoration: none;
 }
 
-.jobs-item:hover { border-color: var(--leaf); background: #fbfdfb; }
+.jobs-item:hover { border-color: var(--leaf); background: var(--mist); }
 
 .jobs-item-head {
   display: flex;
@@ -84,7 +84,7 @@
 .jobs-item-head span { color: var(--muted); font-size: 12px; }
 
 .jobs-item-summary {
-  color: #33463f;
+  color: var(--ink);
   font-size: 14px;
   line-height: 1.6;
 }

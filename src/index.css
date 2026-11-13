@@ -1,19 +1,46 @@
 :root {
-  /* 로그인 화면에서 쓰던 색을 그대로 토큰으로 정리했습니다. */
-  --pine: #245c4e;
-  --pine-deep: #184839;
-  --leaf: #36745d;
-  --moss: #47735f;
-  --ink: #182b29;
-  --muted: #66766e;
-  --soft-text: #486257;
-  --line: #e1e8e2;
-  --field-line: #cbd7cf;
-  --mist: #eef4f0;
-  --dew: #e3eee7;
-  --paper: #fff;
-  --page: #f5f7f5;
+  /* 확정한 흰색·올리브·크림 배색. 주요 반응 버튼은 차콜을 씁니다. */
+  --olive: #6b775d;
+  --olive-deep: #566348;
+  --brown: #49312d;
+  --action: var(--brown);
+  --action-hover: #352420;
+  --charcoal: #30313b;
+  --charcoal-hover: #23242b;
+  --ochre: #eac882;
+  --cream: #faf1dc;
+  --card-day-bg: #fff2bd;
+  --ink: #3d352f;
+  --muted: #65685f;
+  --soft-text: var(--muted);
+  --line: #e8eae2;
+  --field-line: #cfd3c7;
+  --mist: #f5f6f1;
+  --dew: #e8eddd;
+  --paper: #ffffff;
+  --page: var(--paper);
+  --track: #d8dece;
+  --graph-grid: #d8dece;
+  --olive-wash: #6b775d26;
+  --olive-hover: #6b775d12;
+  --focus-ring: var(--olive-deep);
+  --focus-wash: var(--olive-wash);
+  --placeholder: #74776e;
+  --on-accent-muted: #f4f4e8;
+  --inverse-line: #ffffff66;
+  --inverse-hover: #ffffff1a;
+  --shadow-soft: #49312d08;
+  --shadow-medium: #49312d0d;
+  --shadow-strong: #30261d26;
+  --backdrop: #3d352f66;
   --danger: #ab302e;
+  --danger-soft: #fbeeed;
+
+  /* 기존 컴포넌트도 공통 배색을 참조하도록 유지하는 이름입니다. */
+  --pine: var(--olive);
+  --pine-deep: var(--olive-deep);
+  --leaf: var(--olive);
+  --moss: var(--olive-deep);
 
   font-family: 'Segoe UI', 'Malgun Gothic', sans-serif;
   color: var(--ink);
@@ -28,7 +55,7 @@
 body { margin: 0; min-width: 320px; background: var(--page); word-break: keep-all; overflow-wrap: break-word; }
 button, input { font: inherit; }
 button { cursor: pointer; }
-button:focus-visible, a:focus-visible { outline: 3px solid #318974; outline-offset: 4px; }
+button:focus-visible, a:focus-visible { outline: 3px solid var(--focus-ring); outline-offset: 4px; }
 
 .visually-hidden {
   position: absolute;

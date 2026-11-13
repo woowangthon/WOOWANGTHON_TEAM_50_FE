@@ -38,47 +38,61 @@
   line-height: 1.5;
 }
 
-/* 오늘의 미션: 홈에서 가장 먼저 눈에 띄도록 진한 바탕을 씁니다. */
+/* 흰 바탕과 완료 체크를 사용해 다른 카드와 같은 흐름으로 보여 줍니다. */
 .journey-mission {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 0 16px;
   padding: 20px 20px 18px;
-  border-radius: 20px;
-  color: #fff;
-  background: var(--pine);
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  color: var(--ink);
+  background: var(--paper);
 }
 
-.journey-mission .journey-label { color: #cfe3d8; }
-.journey-mission .journey-label > span { color: #b7d3c4; }
+.journey-mission .journey-label { grid-column: 1; color: var(--muted); }
+.journey-mission .journey-label > span { color: var(--moss); }
 
 .journey-mission-text {
-  margin: 0 0 16px;
-  font-size: 17px;
+  grid-column: 1;
+  margin: 0;
+  font-size: 15px;
   font-weight: 600;
   letter-spacing: -0.3px;
   line-height: 1.6;
 }
 
 .journey-mission-button {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   min-height: 44px;
-  padding: 8px 18px;
-  border: 1px solid #ffffff66;
-  border-radius: 999px;
-  color: #fff;
-  background: transparent;
+  padding: 8px 12px;
+  border: 1px solid var(--field-line);
+  border-radius: 10px;
+  color: var(--olive-deep);
+  background: var(--paper);
   font-size: 14px;
   font-weight: 600;
 }
 
-.journey-mission-button:hover { background: #ffffff1a; }
+.journey-mission-button:hover { background: var(--mist); }
+.journey-mission-check { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid currentColor; border-radius: 6px; }
+.journey-mission-check svg { visibility: hidden; }
+.journey-mission-button[aria-pressed='true'] .journey-mission-check svg { visibility: visible; }
 
 .journey-mission.is-done .journey-mission-button {
-  border-color: #fff;
-  color: var(--pine-deep);
-  background: #fff;
+  border-color: var(--olive);
+  color: var(--paper);
+  background: var(--olive);
 }
 
 .journey-mission.is-done .journey-mission-text {
   text-decoration: line-through;
-  text-decoration-color: #ffffff80;
+  text-decoration-color: var(--track);
 }
 
 /* 레벨 */
@@ -131,29 +145,33 @@
   align-items: flex-start;
   gap: 10px;
   padding: 10px 12px;
+  border: 1px solid var(--line);
   border-radius: 12px;
   background: var(--page);
   opacity: 0.6;
 }
 
 .journey-badges li.is-earned {
+  border-color: var(--dew);
   background: var(--dew);
   opacity: 1;
 }
 
 .journey-badge-mark {
   flex: none;
-  width: 22px;
-  height: 22px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
   margin-top: 1px;
-  border: 2px dashed var(--field-line);
-  border-radius: 50%;
+  border-radius: 10px;
+  color: var(--muted);
+  background: var(--mist);
 }
 
 .journey-badges li.is-earned .journey-badge-mark {
-  border: 0;
+  color: var(--paper);
   background: var(--pine);
-  box-shadow: inset 0 0 0 4px var(--dew), inset 0 0 0 6px var(--pine);
 }
 
 .journey-badge-text { display: grid; gap: 2px; min-width: 0; }

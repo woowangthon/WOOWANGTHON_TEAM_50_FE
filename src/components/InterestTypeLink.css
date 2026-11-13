@@ -1,0 +1,18 @@
+.interest-type-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  min-height: 40px;
+  margin-top: 16px;
+  padding: 8px 14px;
+  border: 1px solid var(--field-line);
+  border-radius: 10px;
+  color: var(--pine);
+  background: var(--paper);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.interest-type-link:hover { border-color: var(--leaf); background: var(--mist); }

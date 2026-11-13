@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext.js'
 import { getDoneMissionId, setDoneMissionId } from '../lib/mission.js'
+import UiIcon from './UiIcon.jsx'
 import './JourneyPanel.css'
 
 function Mission({ mission }) {
@@ -22,8 +23,9 @@ function Mission({ mission }) {
         {mission.trait && <span>{mission.trait}에 맞춘 미션</span>}
       </h3>
       <p className="journey-mission-text">{mission.text}</p>
-      <button type="button" className="journey-mission-button" aria-pressed={done} onClick={toggle}>
-        {done ? '완료했어요' : '해 봤어요'}
+      <button type="button" className="journey-mission-button" aria-label={done ? '오늘의 미션 완료 취소' : '오늘의 미션 완료'} aria-pressed={done} onClick={toggle}>
+        <span className="journey-mission-check"><UiIcon name="check" size={16} /></span>
+        완료
       </button>
     </section>
   )
@@ -49,6 +51,8 @@ function Level({ level, nReactions }) {
   )
 }
 
+const BADGE_ICONS = { first_step: 'footprints', collector: 'bookmark', decider: 'decision', explorer: 'compass', streak3: 'flame', streak7: 'calendar', report: 'sparkles' }
+
 function Badges({ badges }) {
   const earned = badges.filter((badge) => badge.earned).length
   return (
@@ -60,7 +64,7 @@ function Badges({ badges }) {
       <ul>
         {badges.map((badge) => (
           <li key={badge.id} className={badge.earned ? 'is-earned' : undefined}>
-            <span className="journey-badge-mark" aria-hidden="true" />
+            <span className="journey-badge-mark"><UiIcon name={BADGE_ICONS[badge.id] || 'award'} /></span>
             <span className="journey-badge-text">
               <strong>{badge.name}</strong>
               <span>{badge.description}</span>

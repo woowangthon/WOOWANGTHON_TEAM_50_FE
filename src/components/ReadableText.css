@@ -1,0 +1,6 @@
+.readable-text { line-height: 1.8; overflow-wrap: anywhere; }
+.readable-text > p { margin: 0; }
+.readable-text > :not(:first-child) { margin-top: 0.85em; }
+.readable-text > ul, .readable-text > ol { margin-bottom: 0; padding-left: 1.4em; }
+.readable-text > :first-child { margin-top: 0; }
+.readable-text li + li { margin-top: 0.45em; }

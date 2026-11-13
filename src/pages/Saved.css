@@ -31,7 +31,7 @@
   font-size: 13px;
 }
 
-.saved-remove:hover:not(:disabled) { color: var(--danger); background: #fbeeed; }
+.saved-remove:hover:not(:disabled) { color: var(--danger); background: var(--danger-soft); }
 
 .saved-message {
   margin: -10px 0 12px;
@@ -57,7 +57,7 @@
 
 .saved-body {
   margin: 0 0 14px;
-  color: #33463f;
+  color: var(--ink);
   font-size: 15px;
   line-height: 1.7;
 }
@@ -71,11 +71,11 @@
   margin-top: 14px;
   padding: 8px 14px;
   border-radius: 10px;
-  color: #fff;
-  background: var(--pine);
+  color: var(--paper);
+  background: var(--action);
   font-size: 14px;
   font-weight: 600;
   text-decoration: none;
 }
 
-.saved-roadmap-link:hover { background: var(--pine-deep); }
+.saved-roadmap-link:hover { background: var(--action-hover); }

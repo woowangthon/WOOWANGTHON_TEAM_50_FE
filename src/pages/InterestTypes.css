@@ -1,0 +1,9 @@
+.interest-explorer { padding: 16px 12px 20px; border: 1px solid var(--line); border-radius: 20px; background: var(--paper); }
+.interest-type-description { display: flex; align-items: start; gap: 14px; min-height: 190px; margin-top: 16px; padding: 20px; border: 1px solid var(--dew); border-radius: 18px; background: var(--dew); }
+.interest-type-code { display: grid; flex: none; place-items: center; width: 36px; height: 36px; border-radius: 12px; color: var(--brown); background: var(--paper); font-size: 18px; font-weight: 700; }
+.interest-type-description h2 { margin: 0 0 6px; font-size: 16px; }
+.interest-type-description h3 { margin: 0 0 8px; color: var(--moss); font-size: 13px; font-weight: 600; }
+.interest-type-description p { margin: 0; color: var(--soft-text); font-size: 14px; line-height: 1.7; }
+.interest-type-description .interest-type-example { margin-top: 10px; color: var(--muted); font-size: 12px; }
+.interest-score-status { margin: 12px 4px 0; color: var(--muted); font-size: 13px; line-height: 1.6; text-align: center; }
+.interest-score-status p { margin: 0 0 10px; }

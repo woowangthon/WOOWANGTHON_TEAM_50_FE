@@ -5,6 +5,7 @@ import { getFeed, postReaction } from '../api/feed.js'
 import { saveCard, unsaveCard } from '../api/me.js'
 import { USE_MOCK } from '../lib/config.js'
 import { CARDS as MOCK_CARDS } from '../mocks/data.js'
+import { traitLabel } from '../lib/interestTypes.js'
 import MajorList from './MajorList.jsx'
 import './FeedDeck.css'
 
@@ -47,10 +48,10 @@ function DoneForToday({ goal, streak, titleRef }) {
   return (
     <div className="feed-done">
       <h3 className="feed-done-title" ref={titleRef} tabIndex={-1}>오늘의 카드 {goal}장을 모두 골랐어요</h3>
-      <p>
+      <p className="feed-done-next">
         {streak > 1 ? `${streak}일째 이어 가고 있어요. ` : ''}내일 새 카드 {goal}장이 준비돼요.
-        그동안 쌓인 내 성향과 어울리는 직업을 살펴보세요.
       </p>
+      <p>그동안 쌓인 내 성향과 어울리는 직업을 살펴보세요.</p>
       <div className="feed-placeholder-actions">
         <Link to="/report" className="feed-secondary">내 리포트 보기</Link>
         <Link to="/jobs" className="feed-secondary">직업 둘러보기</Link>
@@ -71,7 +72,7 @@ function Feedback({ feedback }) {
           <span className="feed-gains">
             <span className="visually-hidden">많이 오른 성향:</span>
             {feedback.gains.map((gain) => (
-              <span key={gain.code} className="feed-gain">{gain.label} +{gain.delta}</span>
+              <span key={gain.code} className="feed-gain">{traitLabel(gain)} +{gain.delta}</span>
             ))}
           </span>
         )}
@@ -235,7 +236,7 @@ export default function FeedDeck({ today, waiting = false, onReacted, onSaved })
 
       {!doneForToday && !waiting && status === 'ready' && card && (
         <div className="feed-stack" data-remaining={Math.min(cards.length - index - 1, 2)}>
-          <article key={card.impression_id} className="feed-card" aria-labelledby={`card-${card.impression_id}`}>
+          <article key={card.impression_id} className="feed-card" data-card-type={card.type} aria-labelledby={`card-${card.impression_id}`}>
             <div className="feed-card-top">
               <p className="feed-card-kind">
                 {TYPE_LABEL[card.type] || '카드'}

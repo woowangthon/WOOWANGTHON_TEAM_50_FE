@@ -1,4 +1,4 @@
-.interest-page { min-height: 100svh; background: radial-gradient(ellipse at 50% 0%, var(--dew), transparent 55%); }
+.interest-page { min-height: 100svh; background: var(--page); }
 .interest-page > .app-header { width: min(100%, 960px); margin: 0 auto; padding: 18px 28px; }
 .interest-main { width: min(100%, 960px); margin: 0 auto; padding: 44px 28px 56px; }
 .interest-intro { margin-bottom: 30px; }
@@ -15,37 +15,44 @@
 .interest-step > span { display: block; color: var(--muted); font-size: 12px; font-weight: 500; }
 .interest-step:focus { outline: none; }
 .interest-questions { display: grid; gap: 20px; }
-.interest-question { min-width: 0; margin: 0; padding: 20px 22px 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 4px 20px #18483904; }
+.interest-question { min-width: 0; margin: 0; padding: 20px 22px 22px; border: 1px solid var(--line); border-radius: 18px; background: var(--paper); box-shadow: 0 4px 20px var(--shadow-soft); }
 /* legend는 기본적으로 테두리 위에 걸쳐 그려지므로, float로 상자 안쪽에 넣습니다. */
 .interest-question legend { float: left; width: 100%; margin: 0 0 6px; padding: 0; color: var(--ink); font-size: 16px; font-weight: 650; line-height: 1.7; }
 .interest-question legend + * { clear: both; }
 .interest-number { margin-right: 10px; color: var(--leaf); font-size: 13px; font-weight: 700; }
 .interest-options { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; margin-top: 8px; }
-.interest-option { position: relative; display: flex; align-items: center; gap: 8px; min-height: 64px; padding: 12px 10px; border: 1px solid var(--field-line); border-radius: 10px; background: var(--paper); color: var(--soft-text); cursor: pointer; font-size: 13px; line-height: 1.5; transition: background 120ms, border-color 120ms; }
+.interest-option { position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px; min-height: 104px; padding: 12px 4px; border: 1px solid var(--field-line); border-radius: 12px; background: var(--paper); color: var(--brown); cursor: pointer; line-height: 1.5; transition: background 120ms, border-color 120ms; }
+.interest-option-face { display: block; width: 44px; height: 44px; flex: none; }
+.survey-face-background { fill: var(--cream); }
+.interest-option-caption { font-size: 13px; font-weight: 600; white-space: nowrap; }
 .interest-option:hover { border-color: var(--leaf); background: var(--mist); }
 .interest-option:has(input:checked) { border-color: var(--pine); background: var(--dew); color: var(--pine-deep); box-shadow: inset 0 0 0 1px var(--pine); font-weight: 650; }
-.interest-option:has(input:focus-visible) { outline: 3px solid #318974; outline-offset: 3px; }
-.interest-option input { flex-shrink: 0; width: 17px; height: 17px; margin: 0; accent-color: var(--pine); }
+.interest-option:has(input:checked) .survey-face-background { fill: var(--paper); }
+.interest-option:has(input:focus-visible) { outline: 3px solid var(--focus-ring); outline-offset: 3px; }
+.interest-option input { position: absolute; inset: 0; z-index: 1; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: pointer; }
 .interest-question.is-missing { border-color: var(--danger); }
-.interest-question:focus { outline: 3px solid #318974; outline-offset: 4px; }
+.interest-question:focus { outline: 3px solid var(--focus-ring); outline-offset: 4px; }
 .interest-message { min-height: 22px; margin: 18px 0 10px; color: var(--danger); font-size: 13px; line-height: 1.7; }
 .interest-actions { display: flex; justify-content: space-between; gap: 12px; }
 .interest-actions button { min-height: 52px; padding: 12px 24px; border-radius: 11px; font-size: 15px; font-weight: 650; }
 .interest-back { border: 1px solid var(--field-line); color: var(--soft-text); background: var(--paper); }
 .interest-back:disabled { opacity: .45; cursor: default; }
-.interest-next { display: flex; align-items: center; justify-content: center; gap: 18px; border: 1px solid var(--pine); background: var(--pine); color: #fff; }
-.interest-next:hover { background: var(--pine-deep); }
+.interest-next { display: flex; align-items: center; justify-content: center; gap: 18px; border: 1px solid var(--action); background: var(--action); color: var(--paper); }
+.interest-next:hover { background: var(--action-hover); }
 .interest-note { margin: 18px 0 0; color: var(--muted); font-size: 12px; line-height: 1.7; text-align: center; }
 
 @media (max-width: 700px) {
   .interest-page > .app-header { padding-inline: 20px; }
   .interest-main { padding: 28px 20px 36px; }
-  .interest-options { grid-template-columns: 1fr; }
-  .interest-option { min-height: 46px; padding: 12px 14px; font-size: 14px; }
+  .interest-options { gap: 6px; }
+  .interest-option { min-height: 92px; padding: 10px 2px; }
   .interest-question { padding: 16px 16px 16px; }
   .interest-question legend { font-size: 15px; }
 }
 @media (max-width: 380px) {
   .interest-main { padding-inline: 14px; }
+  .interest-options { gap: 4px; }
+  .interest-option-face { width: 36px; height: 36px; }
+  .interest-option-caption { font-size: 12px; }
   .interest-actions button { padding-inline: 16px; font-size: 14px; }
 }

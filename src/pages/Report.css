@@ -1,3 +1,6 @@
+.page-head.report-page-head h1 { font-size: 21px; }
+.page-head.report-page-head p { font-size: 13px; line-height: 1.75; }
+
 .report-muted {
   margin: 0;
   color: var(--muted);
@@ -15,7 +18,7 @@
 
 .report-locked h2 {
   margin: 0 0 8px;
-  font-size: 19px;
+  font-size: 17px;
   font-weight: 700;
   letter-spacing: -0.5px;
   line-height: 1.45;
@@ -30,35 +33,35 @@
   justify-content: center;
   min-height: 52px;
   border-radius: 10px;
-  color: #fff;
-  background: var(--pine);
+  color: var(--paper);
+  background: var(--action);
   font-weight: 600;
   text-decoration: none;
 }
 
-.report-cta:hover { background: var(--pine-deep); }
+.report-cta:hover { background: var(--action-hover); }
 
 /* 요약: 리포트에서 가장 먼저 읽히는 부분 */
 .report-summary {
-  padding: 26px 24px 28px;
+  padding: 22px;
   border-radius: 22px;
-  color: #fff;
-  background: var(--pine);
+  color: var(--ink);
+  background: var(--cream);
 }
 
 .report-summary-source {
   margin: 0 0 12px;
-  color: #cfe3d8;
+  color: var(--muted);
   font-size: 13px;
   font-weight: 600;
 }
 
 .report-summary-text {
   margin: 0;
-  font-size: clamp(18px, 4.8vw, 21px);
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  line-height: 1.65;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: -0.15px;
+  line-height: 1.85;
 }
 
 .report-summary-chat {
@@ -67,27 +70,28 @@
   min-height: 40px;
   margin-top: 16px;
   padding: 8px 14px;
-  border: 1px solid #ffffff66;
+  border: 1px solid var(--field-line);
   border-radius: 10px;
-  color: #fff;
-  font-size: 14px;
+  color: var(--brown);
+  background: var(--paper);
+  font-size: 13px;
   font-weight: 600;
   text-decoration: none;
 }
 
-.report-summary-chat:hover { background: #ffffff1a; }
+.report-summary-chat:hover { background: var(--mist); }
 
 /* 섹션 */
 .report-section {
-  margin-top: 28px;
-  padding-top: 24px;
+  margin-top: 24px;
+  padding-top: 20px;
   border-top: 1px solid var(--line);
 }
 
 .report-section h2,
 .report-traits h2 {
   margin: 0 0 12px;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: 700;
   letter-spacing: -0.3px;
 }
@@ -96,8 +100,8 @@
 
 .report-traits {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
   border-top: 0;
 }
 
@@ -111,12 +115,13 @@
 }
 
 .report-chips li {
-  padding: 7px 14px;
+  padding: 6px 11px;
   border-radius: 999px;
   color: var(--pine-deep);
   background: var(--dew);
-  font-size: 15px;
+  font-size: 13px;
   font-weight: 650;
+  white-space: nowrap;
 }
 
 .report-chips.is-majors li {
@@ -138,9 +143,9 @@
   padding: 14px 16px;
   border-radius: 12px;
   color: var(--ink);
-  background: var(--mist);
-  font-size: 15px;
-  line-height: 1.65;
+  background: var(--dew);
+  font-size: 14px;
+  line-height: 1.8;
 }
 
 .report-jobs {
@@ -186,12 +191,12 @@
   margin-bottom: 6px;
 }
 
-.report-job-head h3 { margin: 0; font-size: 17px; font-weight: 700; letter-spacing: -0.4px; }
+.report-job-head h3 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.4px; }
 .report-job-head span { color: var(--muted); font-size: 12px; }
 
 .report-job > p {
   margin: 0 0 12px;
-  color: #33463f;
+  color: var(--ink);
   font-size: 14px;
   line-height: 1.65;
 }
@@ -199,20 +204,20 @@
 .report-job > p:last-child { margin-bottom: 0; }
 
 .report-job-link {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  min-height: 40px;
-  margin-top: 10px;
-  padding: 8px 14px;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 12px 0 0 auto;
   border: 1px solid var(--field-line);
   border-radius: 10px;
-  color: var(--pine);
-  font-size: 14px;
-  font-weight: 600;
+  color: var(--charcoal);
+  background: var(--paper);
   text-decoration: none;
 }
 
-.report-job-link:hover { border-color: var(--leaf); background: var(--mist); }
+.report-job-link:hover { border-color: var(--charcoal); background: var(--cream); }
 
 .report-job-match { margin: 2px 0 10px; }
 

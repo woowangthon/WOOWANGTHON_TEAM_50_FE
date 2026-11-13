@@ -5,47 +5,30 @@
   align-items: center;
   justify-content: center;
   padding: 56px 24px;
-  background: radial-gradient(ellipse at 50% 0%, #e3eee7, transparent 60%);
+  background: var(--page);
 }
 
 .login-brand {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 36px;
-  font-size: 25px;
-  font-weight: 750;
-  letter-spacing: -1px;
+  width: 200px;
+  max-width: 100%;
+  margin-bottom: 28px;
 }
-
-.brand-symbol {
-  display: grid;
-  place-items: center;
-  width: 36px;
-  height: 36px;
-  border-radius: 11px;
-  color: #fff;
-  background: #245c4e;
-  font-family: Georgia, serif;
-}
-
-.brand-accent { color: #36745d; }
 
 .login-card {
   width: 100%;
   max-width: 440px;
   padding: 42px 36px 24px;
-  background: #fff;
-  border: 1px solid #e1e8e2;
+  background: var(--paper);
+  border: 1px solid var(--line);
   border-radius: 24px;
-  box-shadow: 0 16px 60px #1a423308;
+  box-shadow: 0 8px 24px var(--shadow-soft);
 }
 
 .login-header { margin-bottom: 32px; }
 
 .login-eyebrow {
   margin: 0 0 14px;
-  color: #47735f;
+  color: var(--moss);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 2px;
@@ -61,7 +44,7 @@
 
 .login-description {
   margin: 0;
-  color: #66766e;
+  color: var(--muted);
   font-size: 14px;
   line-height: 1.6;
 }
@@ -79,38 +62,40 @@
   width: 100%;
   min-height: 52px;
   padding: 14px;
-  border: 1px solid #cbd7cf;
+  border: 1px solid var(--field-line);
   border-radius: 10px;
-  background: #fff;
-  color: #182b29;
+  background: var(--paper);
+  color: var(--ink);
   font-size: 16px;
 }
 
-.login-field input::placeholder { color: #829087; font-size: 14px; }
-.login-field input:focus { outline: 3px solid #36745d24; border-color: #36745d; }
-.login-field input[aria-invalid='true'] { border-color: #b43c37; }
+.login-field input::placeholder { color: var(--placeholder); font-size: 14px; }
+.login-field input:focus { outline: 3px solid var(--focus-wash); border-color: var(--olive); }
+.login-field input[aria-invalid='true'] { border-color: var(--danger); }
 .password-control { position: relative; }
-.password-control input { padding-right: 76px; }
+.password-control input { padding-right: 60px; }
 
 .password-toggle {
   position: absolute;
   top: 50%;
   right: 8px;
   transform: translateY(-50%);
-  min-height: 36px;
-  padding: 6px 10px;
+  display: grid;
+  place-items: center;
+  width: 40px;
+  min-height: 40px;
+  padding: 8px;
   border: 0;
   border-radius: 6px;
-  color: #486257;
+  color: var(--soft-text);
   background: transparent;
-  font-size: 13px;
 }
 
-.password-toggle:hover { background: #eef4f0; }
+.password-toggle:hover { background: var(--mist); }
 
 .field-error {
   margin: 8px 0 0;
-  color: #ab302e;
+  color: var(--danger);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -124,20 +109,20 @@
   margin-top: 6px;
   border: 0;
   border-radius: 10px;
-  color: #fff;
-  background: #245c4e;
+  color: var(--paper);
+  background: var(--action);
   font-weight: 600;
 }
 
-.login-submit:hover { background: #184839; }
-.login-submit:disabled { cursor: progress; background: #4f7d70; }
-.login-message { margin: 0; color: #486257; font-size: 13px; line-height: 1.7; }
-.login-message.is-error { color: #ab302e; }
-.login-message.is-success { padding: 12px 14px; border-radius: 10px; color: #245c4e; background: #eef4f0; }
+.login-submit:hover { background: var(--action-hover); }
+.login-submit:disabled { cursor: progress; background: var(--muted); }
+.login-message { margin: 0; color: var(--soft-text); font-size: 13px; line-height: 1.7; }
+.login-message.is-error { color: var(--danger); }
+.login-message.is-success { padding: 12px 14px; border-radius: 10px; color: var(--action); background: var(--mist); }
 
 .field-hint {
   margin: 8px 0 0;
-  color: #66766e;
+  color: var(--muted);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -150,8 +135,8 @@
   gap: 4px;
   margin: 10px 0 0;
   padding-top: 16px;
-  border-top: 1px solid #e1e8e2;
-  color: #66766e;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
   font-size: 14px;
 }
 
@@ -160,15 +145,15 @@
   padding: 6px 8px;
   border: 0;
   border-radius: 6px;
-  color: #245c4e;
+  color: var(--action);
   background: transparent;
   font-weight: 650;
   text-decoration: underline;
   text-underline-offset: 3px;
 }
 
-.login-switch button:hover { background: #eef4f0; }
-.login-footer { margin: 28px 0 0; color: #687b6f; font-size: 12px; }
+.login-switch button:hover { background: var(--mist); }
+.login-footer { margin: 28px 0 0; color: var(--muted); font-size: 12px; }
 
 @media (max-width: 480px) {
   .login-page { padding: 32px 20px; }
