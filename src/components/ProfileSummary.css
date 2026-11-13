@@ -54,6 +54,42 @@
 
 .profile-edit:hover { background: var(--mist); }
 
+/* 성향 유형 (GET /me/journey의 persona) */
+.profile-persona {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--paper);
+}
+
+.profile-persona-name {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  margin: 0 0 4px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.profile-persona-code {
+  padding: 2px 9px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--pine);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.profile-persona-tagline {
+  margin: 0;
+  color: var(--soft-text);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
 .profile-summary-empty {
   margin: 18px 0 2px;
   color: var(--soft-text);

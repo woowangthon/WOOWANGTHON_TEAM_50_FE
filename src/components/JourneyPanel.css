@@ -1,0 +1,165 @@
+.journey { margin-top: 36px; }
+
+.journey > h2 {
+  margin: 0 0 14px;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.journey-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.journey-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 10px;
+  margin: 0 0 10px;
+  color: var(--moss);
+  font-size: 13px;
+  font-weight: 650;
+}
+
+.journey-label > span {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.journey-muted {
+  margin: 8px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* 오늘의 미션: 홈에서 가장 먼저 눈에 띄도록 진한 바탕을 씁니다. */
+.journey-mission {
+  padding: 20px 20px 18px;
+  border-radius: 20px;
+  color: #fff;
+  background: var(--pine);
+}
+
+.journey-mission .journey-label { color: #cfe3d8; }
+.journey-mission .journey-label > span { color: #b7d3c4; }
+
+.journey-mission-text {
+  margin: 0 0 16px;
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.3px;
+  line-height: 1.6;
+}
+
+.journey-mission-button {
+  min-height: 44px;
+  padding: 8px 18px;
+  border: 1px solid #ffffff66;
+  border-radius: 999px;
+  color: #fff;
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.journey-mission-button:hover { background: #ffffff1a; }
+
+.journey-mission.is-done .journey-mission-button {
+  border-color: #fff;
+  color: var(--pine-deep);
+  background: #fff;
+}
+
+.journey-mission.is-done .journey-mission-text {
+  text-decoration: line-through;
+  text-decoration-color: #ffffff80;
+}
+
+/* 레벨 */
+.journey-level,
+.journey-badges {
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+}
+
+.journey-level-name {
+  margin: 0 0 10px;
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+}
+
+.journey-level-n { color: var(--leaf); font-variant-numeric: tabular-nums; }
+
+.journey-track {
+  display: block;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--mist);
+}
+
+.journey-track > span {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: var(--pine);
+  transition: width 0.5s ease;
+}
+
+/* 배지 */
+.journey-badges ul {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.journey-badges li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: var(--page);
+  opacity: 0.6;
+}
+
+.journey-badges li.is-earned {
+  background: var(--dew);
+  opacity: 1;
+}
+
+.journey-badge-mark {
+  flex: none;
+  width: 22px;
+  height: 22px;
+  margin-top: 1px;
+  border: 2px dashed var(--field-line);
+  border-radius: 50%;
+}
+
+.journey-badges li.is-earned .journey-badge-mark {
+  border: 0;
+  background: var(--pine);
+  box-shadow: inset 0 0 0 4px var(--dew), inset 0 0 0 6px var(--pine);
+}
+
+.journey-badge-text { display: grid; gap: 2px; min-width: 0; }
+.journey-badge-text strong { font-size: 14px; font-weight: 700; }
+.journey-badge-text span { color: var(--soft-text); font-size: 12px; line-height: 1.45; }
+
+@media (max-width: 380px) {
+  .journey-badges ul { grid-template-columns: 1fr; }
+}

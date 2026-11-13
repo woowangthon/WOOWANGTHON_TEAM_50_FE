@@ -1,0 +1,40 @@
+.match-meter {
+  display: inline-grid;
+  gap: 5px;
+  min-width: min(120px, 100%);
+}
+
+.match-meter-text {
+  color: var(--soft-text);
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+.match-meter-text strong {
+  color: var(--pine);
+  font-size: 14px;
+  font-weight: 750;
+  font-variant-numeric: tabular-nums;
+}
+
+.match-meter-track {
+  display: block;
+  height: 6px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--mist);
+}
+
+.match-meter-track > span {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: inherit;
+  background: var(--leaf);
+}
+
+/* 직업 상세 머리말처럼 크게 보여 줄 때 */
+.match-meter.is-large { gap: 8px; min-width: 0; width: 100%; }
+.match-meter.is-large .match-meter-text { font-size: 14px; }
+.match-meter.is-large .match-meter-text strong { font-size: 22px; letter-spacing: -0.5px; }
+.match-meter.is-large .match-meter-track { height: 10px; }

@@ -1,0 +1,96 @@
+.jobs-filter {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 16px;
+}
+
+.jobs-filter label {
+  color: var(--soft-text);
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.jobs-filter select {
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 40px 10px 14px;
+  border: 1px solid var(--field-line);
+  border-radius: 12px;
+  color: var(--ink);
+  background: var(--paper) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' fill='none' stroke='%23486257' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 16px center;
+  font: inherit;
+  font-size: 15px;
+  appearance: none;
+  cursor: pointer;
+}
+
+.jobs-filter select:focus-visible { outline: 3px solid #318974; outline-offset: 2px; }
+
+.jobs-notice {
+  margin: 0 0 14px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  color: var(--soft-text);
+  background: var(--mist);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.jobs-notice a { color: var(--pine); font-weight: 600; text-underline-offset: 3px; }
+
+.jobs-inline-error {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.jobs-inline-error p { margin: 0; color: var(--danger); font-size: 14px; }
+
+.jobs-list {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  transition: opacity 0.2s ease;
+}
+
+.jobs-list.is-busy { opacity: 0.55; }
+
+.jobs-item {
+  display: grid;
+  gap: 8px;
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  color: var(--ink);
+  background: var(--paper);
+  text-decoration: none;
+}
+
+.jobs-item:hover { border-color: var(--leaf); background: #fbfdfb; }
+
+.jobs-item-head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 4px 10px;
+}
+
+.jobs-item-head strong { font-size: 17px; font-weight: 700; letter-spacing: -0.4px; }
+.jobs-item-head span { color: var(--muted); font-size: 12px; }
+
+.jobs-item-summary {
+  color: #33463f;
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.jobs-more {
+  justify-content: center;
+  width: 100%;
+  margin-top: 14px;
+}

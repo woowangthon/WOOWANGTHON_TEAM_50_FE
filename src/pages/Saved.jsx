@@ -40,9 +40,9 @@ export default function Saved() {
   useEffect(() => {
     let active = true
     getSaved().then(
-      (data) => {
+      (saved) => {
         if (!active) return
-        setCards(data.cards)
+        setCards(saved.cards)
         setStatus('ready')
       },
       (error) => {
@@ -112,6 +112,11 @@ export default function Saved() {
                 <h2 id={`saved-${card.card_id}`}>{card.title}</h2>
                 <p className="saved-body">{card.body}</p>
                 <MajorList majors={card.majors} />
+                {card.job_id && (
+                  <Link to={`/jobs/${card.job_id}`} state={{ from: '/saved' }} className="saved-roadmap-link">
+                    {card.job_name ? `${card.job_name} 자세히 보기` : '직업 자세히 보기'}
+                  </Link>
+                )}
               </article>
             </li>
           ))}

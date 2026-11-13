@@ -181,11 +181,17 @@ src/
 | 내 프로필·성향 조회 | GET | `/me` (프로필이 없으면 404 `profile_not_found`) | 홈, 프로필 |
 | 프로필 등록 | POST | `/me` (`nickname` 1~20자, `grade` 1~3 또는 null) | 프로필 |
 | 프로필 수정 | PATCH | `/me` | 프로필 |
-| 추천 카드 목록 | GET | `/feed?n=10` (직업 카드는 `majors`에 관련 학과) | 홈 |
-| 카드 반응 저장 | POST | `/reactions` (화면에서는 `like`·`dislike`·`choose`만 사용) | 홈 |
-| 저장한 카드 | GET | `/me/saved` (최근 순) | 저장한 카드 |
-| 카드 저장·저장 취소 | PUT·DELETE | `/me/saved/{card_id}` (**백엔드 요청 중**, 지금은 목업만) | 홈, 저장한 카드 |
-| 성향 리포트 | GET | `/me/report` (`ready=false`면 `remaining`만 사용) | 내 리포트 |
+| 추천 카드 목록 | GET | `/feed?n=5` (`majors` 관련 학과, `job_id`, `saved`, `reason` '왜 이 카드?') | 홈 |
+| 카드 반응 저장 | POST | `/reactions` (`like`·`dislike`·`choose`만 사용. 응답의 `gains`·`today_count`·`streak`·`goal_reached`로 피드백) | 홈 |
+| 여정 | GET | `/me/journey` (연속 일수, 오늘 목표, 레벨, 성향 유형, 오늘의 미션, 배지) | 홈 |
+| 저장한 카드 | GET | `/me/saved` (최근 순, 카드에 `job_id` 포함) | 저장한 카드 |
+| 카드 저장·저장 취소 | PUT·DELETE | `/me/saved/{card_id}` (둘 다 204) | 홈, 저장한 카드 |
+| 성향 리포트 | GET | `/me/report` (`ready=false`면 `remaining`만 사용, 직업마다 `match`) | 내 리포트 |
+| 관심사 설문 반영 | POST | `/interest-survey` (`{ version, answers }`, 사용자당 1회) | 관심사 설문 |
+| 직업 목록 | GET | `/jobs?field=&limit=` (적합도 높은 순, `limit` 최대 100) | 직업 탐색 |
+| 직업 상세 | GET | `/jobs/{job_id}` (적합도, 핵심 성향 비교, 준비 단계, 비슷한 직업) | 직업 상세 |
+
+`GET /me/roadmap`, `GET /me/roadmap/{job_id}`는 더 쓰지 않습니다. 준비 단계가 `GET /jobs/{job_id}`의 `steps`와 같아서 직업 상세 화면으로 합쳤습니다.
 
 백엔드의 `GET /onboarding`(가입 설문 카드 5장)은 쓰지 않습니다. 가입 설문은 FE의 12문항 관심사 설문(`/interests`)을 사용합니다.
 
@@ -194,14 +200,22 @@ src/
 ```text
 / (로그인·회원가입) → /interests (설문 미완료 시) → /home → 프로필 없으면 /profile → 저장 후 /home
 
-로그인 후 상단 메뉴: 오늘의 카드(/home) · 내 리포트(/report) · 저장한 카드(/saved)
+로그인 후 상단 메뉴: 오늘의 카드(/home) · 직업 탐색(/jobs) · 내 리포트(/report) · 저장한 카드(/saved)
+직업 상세(/jobs/:jobId): 피드의 직업 카드, 직업 탐색, 내 리포트, 저장한 카드, 비슷한 직업에서 이동
+예전 주소 /roadmap/:jobId는 /jobs/:jobId로 넘어갑니다.
 ```
 
 - 카드는 끌려요·별로예요(선택형은 선택지)를 누르면 다음으로 넘어갑니다. 넘기기는 없습니다.
+- **카드는 하루 5장입니다.** `/me/journey`의 `daily_goal`(5)과 `today_count`(오늘 반응 수, 한국 시간)로 판단해, 5장을 고르면 오늘의 카드를 닫고 "내일 새 카드" 안내를 보여 줍니다. 백엔드는 `daily_goal`을 목표로만 두고 `/feed`를 막지 않으므로, 상한은 화면에서만 적용됩니다. 여정을 못 불러오면 막지 않습니다.
+- 반응하면 카드 위에 "이번 반응으로 오른 성향"(`gains`)을 보여 줍니다.
 - 저장은 반응이 아니라 북마크입니다. 저장해도 카드가 넘어가지 않고 성향에도 반영되지 않습니다.
-- 리포트는 최소 개수 없이 끌려요를 1번 이상 누르면 열립니다. (**백엔드 요청 중**, 지금 백엔드는 5개 기준)
+- 리포트는 최소 개수 없이 끌려요나 선택형 답이 1개 이상이면 열립니다. 저장은 세지 않습니다.
 - `summary_by_ai`가 true면 Gemini가 쓴 요약이라 "AI 진로 동료가 정리한 내 성향"으로 표시합니다.
-- 직업 점수(`jobs[].score`)는 화면에 보여 주지 않고 순서로만 씁니다.
+- 직업 적합도는 `match`(0~100)를 "나와 맞는 정도 N%"로 보여 줍니다. `score`는 쓰지 않습니다. 성향이 아직 없으면 `match`가 null이라 숫자 대신 안내 문구를 보여 줍니다.
+- 홈의 성향 유형(`persona`)과 레벨은 프로필 요약에, 오늘의 미션·레벨 진행·배지는 피드 아래 "나의 탐험 기록"에 보여 줍니다. `/me/journey`를 못 불러오면 이 부분만 숨기고 홈은 그대로 씁니다.
+- 오늘의 미션 완료 여부는 서버에 저장하지 않아서 브라우저 localStorage에 계정별로 기억합니다. 미션 id에 날짜가 들어 있어 날이 바뀌면 자동으로 초기화됩니다. (`src/lib/mission.js`)
+- 관심사 설문은 마지막 단계에서 `POST /interest-survey`로 보내고, 성공해야 완료로 기록합니다.
+- 직업 상세의 성향 비교는 직업에서의 비중(`level` 1~3)을 3으로 나눠 내 성향(`mine` 0~100%)과 같은 막대로 비교합니다.
 
 ### 환경 변수
 
