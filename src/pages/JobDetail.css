@@ -12,6 +12,41 @@
 
 .roadmap-head { margin-bottom: 8px; }
 
+/* ---------- 배치: 웹은 2단 (왼쪽 제목·본문 · 오른쪽 나와 맞는 정도와 비슷한 직업) ---------- */
+/* 좁은 화면에서는 두 칸을 풀어(display: contents) 제목 → 나와 맞는 정도 → 본문 → 비슷한 직업 순서로 둡니다. */
+.job-layout {
+  display: flex;
+  flex-direction: column;
+}
+
+.job-primary,
+.job-side { display: contents; }
+
+.job-head { order: 1; }
+.job-side .job-match { order: 2; }
+.job-main { order: 3; min-width: 0; }
+.job-similar-wrap { order: 4; }
+
+@media (min-width: 960px) {
+  .job-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    gap: 40px;
+    align-items: start;
+  }
+
+  .job-primary,
+  .job-side { display: block; min-width: 0; }
+
+  .job-head { margin-bottom: 0; }
+  .job-head h1 { font-size: 34px; }
+  .job-side .job-match { margin-top: 0; }
+
+  /* 오른쪽 칸: '나와 맞는 정도' 아래로 비슷한 직업을 세로로 둡니다. */
+  .job-side .roadmap-section { margin-top: 24px; padding-top: 0; border-top: 0; }
+  .job-side .job-similar { grid-template-columns: 1fr; }
+}
+
 .roadmap-meta {
   display: flex;
   flex-wrap: wrap;

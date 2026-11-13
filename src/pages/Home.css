@@ -1,0 +1,30 @@
+/* 홈: 맨 위에 프로필을 가로로 넓게 두고, 그 아래 왼쪽 오늘의 카드 · 오른쪽 탐험 기록.
+   좁은 화면(휴대폰)에서는 프로필 → 오늘의 카드 → 탐험 기록 순서로 한 줄입니다. */
+.home-layout {
+  display: grid;
+  grid-template-areas:
+    'profile'
+    'feed'
+    'journey';
+}
+
+.home-profile { grid-area: profile; min-width: 0; }
+.home-feed { grid-area: feed; min-width: 0; }
+.home-journey { grid-area: journey; min-width: 0; }
+
+@media (min-width: 960px) {
+  .home-layout {
+    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-areas:
+      'profile profile'
+      'feed journey';
+    gap: 28px 36px;
+    align-items: start;
+  }
+
+  /* 2단에서는 칸 사이 간격을 격자가 맡으므로 각 블록의 위 여백을 없앱니다. */
+  .home-feed .feed,
+  .home-journey .journey { margin-top: 0; }
+
+  .home-journey .journey > h2 { font-size: 16px; }
+}

@@ -1,35 +1,46 @@
 .app-layout {
-  width: 100%;
-  max-width: 560px;
   min-height: 100svh;
-  margin: 0 auto;
-  padding: 0 20px 48px;
+  padding-bottom: 48px;
   background: var(--page);
 }
 
-@media (min-width: 600px) {
-  .app-layout { padding: 8px 24px 64px; }
+/* 헤더·본문이 같이 쓰는 가운데 정렬 폭 (웹 기준 최대 1200px) */
+.app-container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 32px;
 }
 
-/* AI 동료처럼 사이드바가 있는 화면 */
-.app-layout.is-wide { max-width: 1040px; }
+.app-main { padding-top: 28px; padding-bottom: 24px; }
 
-/* 리포트·저장한 카드처럼 제목이 있는 화면의 머리말 */
-.page-head { margin: 10px 0 22px; }
+@media (max-width: 720px) {
+  .app-container { padding: 0 20px; }
+  .app-main { padding-top: 18px; }
+}
+
+/* 화면 제목 머리말 */
+.page-head { margin: 4px 0 24px; }
 
 .page-head h1 {
   margin: 0 0 6px;
-  font-size: 24px;
+  font-size: 28px;
   font-weight: 750;
   letter-spacing: -0.8px;
   line-height: 1.35;
 }
 
 .page-head p {
+  max-width: 46em;
   margin: 0;
   color: var(--soft-text);
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.6;
+}
+
+@media (max-width: 720px) {
+  .page-head h1 { font-size: 24px; }
+  .page-head p { font-size: 14px; }
 }
 
 /* 불러오는 중·오류·빈 상태 */

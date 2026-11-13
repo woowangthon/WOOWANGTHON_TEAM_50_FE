@@ -7,6 +7,7 @@ import FeedDeck from '../components/FeedDeck.jsx'
 import JourneyPanel from '../components/JourneyPanel.jsx'
 import PageStatus from '../components/PageStatus.jsx'
 import ProfileSummary from '../components/ProfileSummary.jsx'
+import './Home.css'
 
 export default function Home() {
   const [me, setMe] = useState(null)
@@ -89,11 +90,22 @@ export default function Home() {
 
   const today = journey && { count: journey.today_count, goal: journey.daily_goal, streak: journey.streak }
 
+  // 웹: 맨 위 프로필(가로로 넓게), 그 아래 왼쪽 오늘의 카드 · 오른쪽 탐험 기록. 좁은 화면: 프로필 → 카드 → 탐험 기록 순서.
   return (
     <AppLayout>
-      <ProfileSummary me={me} persona={journey?.persona} level={journey?.level} />
-      <FeedDeck today={today} waiting={!journeySettled} onReacted={handleReacted} onSaved={refreshJourney} />
-      {journey && <JourneyPanel journey={journey} />}
+      <div className="home-layout">
+        <div className="home-profile">
+          <ProfileSummary me={me} persona={journey?.persona} level={journey?.level} />
+        </div>
+        <div className="home-feed">
+          <FeedDeck today={today} waiting={!journeySettled} onReacted={handleReacted} onSaved={refreshJourney} />
+        </div>
+        {journey && (
+          <div className="home-journey">
+            <JourneyPanel journey={journey} />
+          </div>
+        )}
+      </div>
     </AppLayout>
   )
 }

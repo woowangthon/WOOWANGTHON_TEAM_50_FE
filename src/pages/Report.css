@@ -1,5 +1,8 @@
-.page-head.report-page-head h1 { font-size: 21px; }
-.page-head.report-page-head p { font-size: 13px; line-height: 1.75; }
+/* 내 성향 리포트: 가로 줄 단위로 쌓고, 줄 안의 칸은 높이를 맞춥니다. 모든 칸은 같은 카드 모양입니다. */
+.report {
+  display: grid;
+  gap: 20px;
+}
 
 .report-muted {
   margin: 0;
@@ -8,43 +11,26 @@
   line-height: 1.6;
 }
 
-/* 잠긴 리포트 */
+/* 공통 카드 */
+.report-card,
 .report-locked {
-  padding: 26px 22px;
+  padding: 22px 24px;
   border: 1px solid var(--line);
-  border-radius: 20px;
+  border-radius: 18px;
   background: var(--paper);
 }
 
-.report-locked h2 {
-  margin: 0 0 8px;
-  font-size: 17px;
+.report-card h2 {
+  margin: 0 0 12px;
+  font-size: 16px;
   font-weight: 700;
-  letter-spacing: -0.5px;
-  line-height: 1.45;
+  letter-spacing: -0.3px;
 }
 
-.report-locked > p { margin: 0 0 22px; color: var(--soft-text); font-size: 14px; line-height: 1.6; }
-
-
-.report-cta {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 52px;
-  border-radius: 10px;
-  color: var(--paper);
-  background: var(--action);
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.report-cta:hover { background: var(--action-hover); }
-
-/* 요약: 리포트에서 가장 먼저 읽히는 부분 */
+/* ---------- ① 요약 ---------- */
 .report-summary {
-  padding: 22px;
-  border-radius: 22px;
+  padding: 24px 26px;
+  border-radius: 18px;
   color: var(--ink);
   background: var(--cream);
 }
@@ -58,7 +44,7 @@
 
 .report-summary-text {
   margin: 0;
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 500;
   letter-spacing: -0.15px;
   line-height: 1.85;
@@ -81,29 +67,56 @@
 
 .report-summary-chat:hover { background: var(--mist); }
 
-/* 섹션 */
-.report-section {
-  margin-top: 24px;
-  padding-top: 20px;
-  border-top: 1px solid var(--line);
-}
-
-.report-section h2,
-.report-traits h2 {
-  margin: 0 0 12px;
-  font-size: 15px;
+/* 잠긴 리포트 */
+.report-locked h2 {
+  margin: 0 0 8px;
+  font-size: 17px;
   font-weight: 700;
-  letter-spacing: -0.3px;
+  letter-spacing: -0.5px;
+  line-height: 1.45;
 }
 
-.report-section > .report-muted { margin: -6px 0 14px; }
+.report-locked > p { margin: 0 0 22px; color: var(--soft-text); font-size: 14px; line-height: 1.6; }
 
-.report-traits {
+.report-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 52px;
+  border-radius: 10px;
+  color: var(--paper);
+  background: var(--action);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.report-cta:hover { background: var(--action-hover); }
+
+/* ---------- ② 끌린 흥미 유형 | 중요하게 여기는 것 + 공부 팁 ---------- */
+.report-insights {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-  border-top: 0;
+  gap: 20px;
 }
+
+.report-insights-side {
+  display: grid;
+  gap: 20px;
+}
+
+.report-interest {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.report-interest .interest-radar {
+  align-self: center;
+  width: 100%;
+  max-width: 300px;
+  margin: 8px auto 0;
+}
+
+.report-interest-note { margin-top: 12px; }
 
 .report-chips {
   display: flex;
@@ -115,7 +128,7 @@
 }
 
 .report-chips li {
-  padding: 6px 11px;
+  padding: 6px 12px;
   border-radius: 999px;
   color: var(--pine-deep);
   background: var(--dew);
@@ -145,126 +158,159 @@
   color: var(--ink);
   background: var(--dew);
   font-size: 14px;
-  line-height: 1.8;
+  line-height: 1.75;
 }
 
-.report-jobs {
-  display: grid;
-  gap: 12px;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  counter-reset: job;
-}
-
-.report-job {
-  position: relative;
-  padding: 16px 18px 16px 52px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--paper);
-  counter-increment: job;
-}
-
-/* 순위가 있는 목록이라 번호를 붙입니다. */
-.report-job::before {
-  content: counter(job);
-  position: absolute;
-  top: 16px;
-  left: 18px;
-  display: grid;
-  place-items: center;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  color: var(--pine);
-  background: var(--mist);
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.report-job-head {
+/* ---------- ③ 어울리는 직업 (순위 목록) ---------- */
+.report-card-head {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 10px;
-  margin-bottom: 6px;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 20px;
+  margin-bottom: 14px;
 }
 
-.report-job-head h3 { margin: 0; font-size: 16px; font-weight: 700; letter-spacing: -0.4px; }
-.report-job-head span { color: var(--muted); font-size: 12px; }
-
-.report-job > p {
-  margin: 0 0 12px;
-  color: var(--ink);
-  font-size: 14px;
-  line-height: 1.65;
-}
-
-.report-job > p:last-child { margin-bottom: 0; }
-
-.report-job-link {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  margin: 12px 0 0 auto;
-  border: 1px solid var(--field-line);
-  border-radius: 10px;
-  color: var(--charcoal);
-  background: var(--paper);
-  text-decoration: none;
-}
-
-.report-job-link:hover { border-color: var(--charcoal); background: var(--cream); }
-
-.report-job-match { margin: 2px 0 10px; }
+.report-card-head h2 { margin-bottom: 4px; }
 
 .report-more-jobs {
   display: inline-flex;
   align-items: center;
-  min-height: 44px;
-  margin-top: 10px;
+  min-height: 40px;
   color: var(--pine);
   font-size: 14px;
   font-weight: 600;
   text-underline-offset: 3px;
 }
 
-/* 반응 기록 */
-.report-counts { margin-top: 32px; }
-
-.report-counts h2 {
-  margin: 0 0 10px;
-  color: var(--soft-text);
-  font-size: 13px;
-  font-weight: 650;
-}
-
-.report-counts dl {
+.report-jobs {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
   margin: 0;
+  padding: 0;
+  list-style: none;
 }
 
-.report-counts dl > div {
-  padding: 10px 4px;
-  border-radius: 10px;
-  background: var(--mist);
-  text-align: center;
+.report-jobs > li + li { border-top: 1px solid var(--line); }
+
+/* 좁은 화면: 순위 · 이름 / 설명 / 나와 맞는 정도 · 자세히 보기 */
+.report-job {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto;
+  grid-template-areas:
+    'rank name go'
+    '. summary summary'
+    '. match match';
+  align-items: center;
+  gap: 6px 12px;
+  padding: 14px 8px;
+  border-radius: 12px;
+  color: var(--ink);
+  text-decoration: none;
 }
 
-.report-counts dt { color: var(--soft-text); font-size: 12px; white-space: nowrap; }
+.report-job:hover { background: var(--mist); }
 
-.report-counts dd {
-  margin: 2px 0 0;
-  font-size: 18px;
+.report-job-rank {
+  grid-area: rank;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  color: var(--pine);
+  background: var(--dew);
+  font-size: 13px;
   font-weight: 700;
-  font-variant-numeric: tabular-nums;
+}
+
+.report-jobs > li:first-child .report-job-rank { color: var(--paper); background: var(--pine); }
+
+.report-job-name {
+  grid-area: name;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 2px 10px;
+  min-width: 0;
+}
+
+.report-job-name strong { font-size: 16px; font-weight: 700; letter-spacing: -0.4px; }
+.report-job-name span { color: var(--muted); font-size: 12px; }
+
+.report-job-summary {
+  grid-area: summary;
+  display: -webkit-box;
+  overflow: hidden;
+  color: var(--soft-text);
+  font-size: 14px;
+  line-height: 1.6;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.report-job-match { grid-area: match; }
+.report-job-match .match-meter { width: 100%; max-width: 240px; }
+
+.report-job-go {
+  grid-area: go;
+  color: var(--pine);
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ---------- 웹 배치 ---------- */
+@media (min-width: 960px) {
+  .report { gap: 24px; }
+
+  .report-summary { padding: 28px 32px; }
+
+  /* 잠긴 리포트: 버튼은 글자 폭만큼 */
+  .report-locked { padding: 28px 32px; }
+  .report-locked .report-cta { align-self: flex-start; display: inline-flex; padding: 0 32px; }
+
+  /* ② 왼쪽 흥미 유형(그래프) | 오른쪽 중요하게 여기는 것 + 공부 팁 */
+  .report-insights {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 24px;
+  }
+
+  .report-insights-side { grid-template-rows: auto 1fr; gap: 24px; }
+
+  /* 흥미 유형 칸: 왼쪽 글(제목·유형·설명·링크) | 오른쪽 그래프 — 오른쪽 두 칸과 높이를 맞춥니다. */
+  .report-interest {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 250px;
+    grid-template-rows: auto auto 1fr auto;
+    grid-template-areas:
+      'title radar'
+      'chips radar'
+      'note radar'
+      'link radar';
+    column-gap: 20px;
+    align-items: start;
+  }
+
+  .report-interest > h2 { grid-area: title; }
+  .report-interest > .report-chips,
+  .report-interest > p.report-muted:not(.report-interest-note) { grid-area: chips; }
+  .report-interest > .report-interest-note { grid-area: note; }
+  .report-interest > .interest-type-link { grid-area: link; justify-self: start; }
+  .report-interest > .interest-radar { grid-area: radar; align-self: center; max-width: 250px; margin: 0; }
+
+  /* ③ 직업 한 줄: 순위 | 이름·분야 | 한 줄 설명 | 나와 맞는 정도 | 자세히 보기 */
+  .report-job {
+    grid-template-columns: 28px minmax(160px, 220px) minmax(0, 1fr) 200px auto;
+    grid-template-areas: 'rank name summary match go';
+    gap: 16px;
+    padding: 14px 12px;
+  }
+
+  .report-job-name { flex-direction: column; gap: 2px; }
+  .report-job-summary { -webkit-line-clamp: 1; }
 }
 
 @media (max-width: 380px) {
-  .report-traits { grid-template-columns: 1fr; }
+  .report-card,
+  .report-locked { padding: 18px; }
 }

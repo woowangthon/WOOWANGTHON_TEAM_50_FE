@@ -3,21 +3,16 @@ import { Link } from 'react-router-dom'
 import { errorMessage } from '../api/client.js'
 import { getReport } from '../api/me.js'
 import AppLayout from '../components/AppLayout.jsx'
-import MajorList from '../components/MajorList.jsx'
-import MatchMeter from '../components/MatchMeter.jsx'
+import InterestRadar from '../components/InterestRadar.jsx'
 import InterestTypeLink from '../components/InterestTypeLink.jsx'
+import MatchMeter from '../components/MatchMeter.jsx'
 import ReadableText from '../components/ReadableText.jsx'
-import UiIcon from '../components/UiIcon.jsx'
 import { traitLabel } from '../lib/interestTypes.js'
 import './Report.css'
 
 // 리포트는 최소 개수 없이 끌려요나 선택형 답이 1개 이상이면 열립니다. 저장은 세지 않습니다.
-const REACTION_LABELS = [
-  ['like', '끌려요'],
-  ['dislike', '별로예요'],
-  ['choose', '선택형 답'],
-]
-
+// 배치(웹): ① 요약 ② 끌린 흥미 유형(그래프) | 중요하게 여기는 것 + 공부 팁 ③ 어울리는 직업 순위 ④ 학과
+// 좁은 화면에서는 같은 순서로 한 줄씩 쌓입니다.
 function TraitChips({ traits }) {
   if (!traits.length) return <p className="report-muted">아직 뚜렷하지 않아요.</p>
   return (
@@ -37,6 +32,39 @@ function LockedReport() {
   )
 }
 
+// 어울리는 직업: 한 직업을 한 줄로 (순위 · 이름·분야 · 한 줄 설명 · 나와 맞는 정도 · 자세히 보기). 줄 전체가 상세로 가는 링크입니다.
+function JobRanking({ jobs }) {
+  return (
+    <section className="report-card report-jobs-card" aria-labelledby="report-jobs-title">
+      <div className="report-card-head">
+        <div>
+          <h2 id="report-jobs-title">어울리는 직업</h2>
+          <p className="report-muted">나와 맞는 정도가 높은 순서예요. 반응이 적을 때는 순서가 자주 바뀔 수 있어요.</p>
+        </div>
+        <Link to="/jobs" className="report-more-jobs">다른 직업도 둘러보기</Link>
+      </div>
+      <ol className="report-jobs">
+        {jobs.map((job, index) => (
+          <li key={job.job_id}>
+            <Link to={`/jobs/${job.job_id}`} state={{ from: '/report' }} className="report-job">
+              <span className="report-job-rank" aria-hidden="true">{index + 1}</span>
+              <span className="report-job-name">
+                <strong>{job.name}</strong>
+                {job.field && <span>{job.field}</span>}
+              </span>
+              {job.summary && <span className="report-job-summary">{job.summary}</span>}
+              <span className="report-job-match">
+                {typeof job.match === 'number' && <MatchMeter match={job.match} />}
+              </span>
+              <span className="report-job-go">자세히 보기<span aria-hidden="true"> →</span></span>
+            </Link>
+          </li>
+        ))}
+      </ol>
+    </section>
+  )
+}
+
 function ReadyReport({ report }) {
   return (
     <>
@@ -50,64 +78,37 @@ function ReadyReport({ report }) {
         </Link>
       </section>
 
-      <section className="report-section report-traits">
-        <div>
-          <h2>끌린 흥미 유형</h2>
+      <div className="report-insights">
+        <section className="report-card report-interest" aria-labelledby="report-interest-title">
+          <h2 id="report-interest-title">끌린 흥미 유형</h2>
           <TraitChips traits={report.top_interests} />
+          <p className="report-muted report-interest-note">가장 많이 끌린 유형 2개예요. 그래프에서 6가지 유형을 한눈에 비교할 수 있어요.</p>
+          <InterestRadar traits={report.traits} />
           <InterestTypeLink>흥미 유형 알아보기</InterestTypeLink>
-        </div>
-        <div>
-          <h2>중요하게 여기는 것</h2>
-          <TraitChips traits={report.strengths} />
-        </div>
-      </section>
-
-      {report.study_tips.length > 0 && (
-        <section className="report-section">
-          <h2>이렇게 해 보면 좋아요</h2>
-          <ul className="report-tips">
-            {report.study_tips.map((tip) => <li key={tip}>{tip}</li>)}
-          </ul>
         </section>
-      )}
 
-      {report.jobs.length > 0 && (
-        <section className="report-section">
-          <h2>어울리는 직업</h2>
-          <p className="report-muted">나와 맞는 정도가 높은 순서예요. 반응이 적을 때는 순서가 자주 바뀔 수 있어요.</p>
-          <ol className="report-jobs">
-            {report.jobs.map((job) => (
-              <li key={job.job_id} className="report-job">
-                <div className="report-job-head">
-                  <h3>{job.name}</h3>
-                  {job.field && <span>{job.field}</span>}
-                </div>
-                {typeof job.match === 'number' && (
-                  <div className="report-job-match">
-                    <MatchMeter match={job.match} />
-                  </div>
-                )}
-                {job.summary && <p>{job.summary}</p>}
-                <MajorList majors={job.majors} />
-                <Link
-                  to={`/jobs/${job.job_id}`}
-                  state={{ from: '/report' }}
-                  className="report-job-link"
-                  aria-label={`${job.name} 자세히 보기`}
-                  title={`${job.name} 자세히 보기`}
-                >
-                  <UiIcon name="search" />
-                </Link>
-              </li>
-            ))}
-          </ol>
-          <Link to="/jobs" className="report-more-jobs">다른 직업도 둘러보기</Link>
-        </section>
-      )}
+        <div className="report-insights-side">
+          <section className="report-card" aria-labelledby="report-strengths-title">
+            <h2 id="report-strengths-title">중요하게 여기는 것</h2>
+            <TraitChips traits={report.strengths} />
+          </section>
+
+          {report.study_tips.length > 0 && (
+            <section className="report-card report-tips-card" aria-labelledby="report-tips-title">
+              <h2 id="report-tips-title">이렇게 해 보면 좋아요</h2>
+              <ul className="report-tips">
+                {report.study_tips.map((tip) => <li key={tip}>{tip}</li>)}
+              </ul>
+            </section>
+          )}
+        </div>
+      </div>
+
+      {report.jobs.length > 0 && <JobRanking jobs={report.jobs} />}
 
       {report.majors.length > 0 && (
-        <section className="report-section">
-          <h2>살펴볼 만한 학과</h2>
+        <section className="report-card" aria-labelledby="report-majors-title">
+          <h2 id="report-majors-title">살펴볼 만한 학과</h2>
           <ul className="report-chips is-majors">
             {report.majors.map((major) => <li key={major}>{major}</li>)}
           </ul>
@@ -144,7 +145,7 @@ export default function Report() {
 
   return (
     <AppLayout>
-      <header className="page-head report-page-head">
+      <header className="page-head">
         <h1>내 성향 리포트</h1>
         <p>지금까지 카드에 반응한 기록으로 정리했어요. 반응할수록 내용이 바뀌어요.</p>
       </header>
@@ -169,20 +170,10 @@ export default function Report() {
         </div>
       )}
 
-      {status === 'ready' && (report.ready ? <ReadyReport report={report} /> : <LockedReport />)}
-
       {status === 'ready' && (
-        <section className="report-counts" aria-labelledby="report-counts-title">
-          <h2 id="report-counts-title">지금까지 반응한 기록</h2>
-          <dl>
-            {REACTION_LABELS.map(([key, label]) => (
-              <div key={key}>
-                <dt>{label}</dt>
-                <dd>{report.reaction_counts?.[key] ?? 0}</dd>
-              </div>
-            ))}
-          </dl>
-        </section>
+        <div className="report">
+          {report.ready ? <ReadyReport report={report} /> : <LockedReport />}
+        </div>
       )}
     </AppLayout>
   )

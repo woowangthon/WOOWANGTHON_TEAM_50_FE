@@ -213,7 +213,7 @@ function ChatScreen({ userId }) {
   )
 
   return (
-    <AppLayout wide>
+    <AppLayout>
       <div className="chat">
         <div className={`chat-backdrop${listOpen ? ' is-open' : ''}`} aria-hidden="true" onClick={() => setListOpen(false)} />
 

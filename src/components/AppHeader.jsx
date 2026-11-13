@@ -12,26 +12,28 @@ const NAV_ITEMS = [
   { to: '/interest-types', label: '흥미 유형' },
 ]
 
-// nav를 켜면 화면 이동 메뉴를 함께 보여 줍니다. (설문처럼 흐름 중간인 화면에서는 끕니다)
+// 웹에서는 한 줄에 로고 · 메뉴 · 로그아웃을 두고, 좁은 화면에서는 메뉴를 아래 줄로 내립니다.
+// nav를 끄면 메뉴 없이 로고와 로그아웃만 보여 줍니다. (설문처럼 흐름 중간인 화면)
 export default function AppHeader({ nav = false }) {
   const { signOut } = useAuth()
 
   return (
-    <header className="app-header">
-      <div className="app-header-row">
+    <header className={`app-header${nav ? ' has-nav' : ''}`}>
+      <div className="app-header-inner app-container">
         <Link to="/home" className="app-brand" aria-label="FindME 홈">
           <BrandLogo decorative />
         </Link>
+
+        {nav && (
+          <nav className="app-nav" aria-label="주요 메뉴">
+            {NAV_ITEMS.map((item) => (
+              <NavLink key={item.to} to={item.to} className="app-nav-link">{item.label}</NavLink>
+            ))}
+          </nav>
+        )}
+
         <button type="button" className="app-header-action" onClick={signOut}>로그아웃</button>
       </div>
-
-      {nav && (
-        <nav className="app-nav" aria-label="주요 메뉴">
-          {NAV_ITEMS.map((item) => (
-            <NavLink key={item.to} to={item.to} className="app-nav-link">{item.label}</NavLink>
-          ))}
-        </nav>
-      )}
     </header>
   )
 }

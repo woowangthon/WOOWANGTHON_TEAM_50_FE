@@ -1,63 +1,91 @@
-.app-header { padding: 18px 0; }
+/* 웹: 위쪽에 붙어 있는 한 줄 헤더 (로고 · 메뉴 · 로그아웃) */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
+}
 
-.app-header-row {
+.app-header-inner {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 28px;
+  min-height: 72px;
 }
 
 .app-brand {
   display: block;
-  width: 104px;
   flex-shrink: 0;
+  width: 92px;
   text-decoration: none;
 }
 
 .app-header-action {
+  flex: none;
   min-height: 40px;
-  padding: 8px 12px;
-  border: 0;
-  border-radius: 8px;
+  margin-left: auto;
+  padding: 8px 14px;
+  border: 1px solid var(--line);
+  border-radius: 10px;
   color: var(--soft-text);
-  background: transparent;
+  background: var(--paper);
   font-size: 14px;
 }
 
 .app-header-action:hover { background: var(--mist); }
 
 .app-nav {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
+  display: flex;
+  align-items: center;
   gap: 4px;
-  margin-top: 14px;
-  padding: 4px 0 12px;
-  border-bottom: 1px solid var(--line);
-  background: var(--paper);
-}
-
-/* 좁은 화면에서는 여섯 메뉴를 3개씩 두 줄로 배치합니다. */
-@media (max-width: 540px) {
-  .app-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 .app-nav-link {
-  display: grid;
-  place-items: center;
+  display: inline-flex;
+  align-items: center;
   min-height: 40px;
-  padding: 6px 4px;
-  border-radius: 9px;
+  padding: 8px 14px;
+  border-radius: 10px;
   color: var(--soft-text);
-  font-size: 13px;
+  font-size: 15px;
   font-weight: 600;
-  text-align: center;
   text-decoration: none;
   white-space: nowrap;
 }
 
-.app-nav-link:hover { color: var(--pine); }
+.app-nav-link:hover { color: var(--ink); background: var(--mist); }
 
 .app-nav-link.active {
   color: var(--brown);
   background: var(--cream);
+}
+
+/* 메뉴가 한 줄에 다 들어가지 않으면 메뉴를 아래 줄로 내려 6칸으로 나눕니다. */
+@media (max-width: 1000px) {
+  .app-header { position: static; }
+
+  .app-header-inner {
+    flex-wrap: wrap;
+    row-gap: 10px;
+    min-height: 0;
+    padding-top: 14px;
+    padding-bottom: 10px;
+  }
+
+  .app-header.has-nav .app-nav {
+    display: grid;
+    order: 3;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .app-nav-link { justify-content: center; padding: 8px 4px; font-size: 14px; }
+}
+
+/* 휴대폰: 여섯 메뉴를 3개씩 두 줄로 */
+@media (max-width: 560px) {
+  .app-brand { width: 84px; }
+  .app-header.has-nav .app-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .app-nav-link { font-size: 13px; }
 }

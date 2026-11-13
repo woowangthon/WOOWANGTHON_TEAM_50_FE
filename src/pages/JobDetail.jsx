@@ -233,40 +233,49 @@ function JobDetailContent({ jobId }) {
         </div>
       )}
 
+      {/* 웹: 왼쪽은 제목·성향 비교·AI 질문·로드맵, 오른쪽 칸은 나와 맞는 정도·비슷한 직업.
+          좁은 화면: 두 칸을 풀어서 제목 → 나와 맞는 정도 → 본문 → 비슷한 직업 순서. */}
       {status === 'ready' && (
-        <>
-          <header className="roadmap-head">
-            {job.field && <p className="roadmap-meta">{job.field}</p>}
-            <h1>{job.name}</h1>
-            {job.summary && <p className="roadmap-summary">{job.summary}</p>}
-            {job.majors.length > 0 && (
-              <div className="job-majors">
-                <MajorList majors={job.majors} />
-              </div>
-            )}
-          </header>
+        <div className="job-layout">
+          <div className="job-primary">
+            <header className="roadmap-head job-head">
+              {job.field && <p className="roadmap-meta">{job.field}</p>}
+              <h1>{job.name}</h1>
+              {job.summary && <p className="roadmap-summary">{job.summary}</p>}
+              {job.majors.length > 0 && (
+                <div className="job-majors">
+                  <MajorList majors={job.majors} />
+                </div>
+              )}
+            </header>
 
-          <section className="job-match" aria-label="나와 맞는 정도">
-            {hasMatch ? (
-              <>
-                <MatchMeter match={job.match} size="large" />
-                <p>지금까지 반응한 카드로 계산했어요. 카드에 반응할수록 바뀔 수 있어요.</p>
-              </>
-            ) : (
-              <p>
-                오늘의 카드에 반응하면 이 직업이 나와 얼마나 맞는지 알려 드려요.{' '}
-                <Link to="/home">카드 보러 가기</Link>
-              </p>
-            )}
-          </section>
+            <div className="job-main">
+              <TraitCompare traits={job.traits} hasMatch={hasMatch} />
+              <AskAi job={job} />
+              <Steps steps={job.steps} />
+              <p className="roadmap-source">로드맵 내용은 커리어넷 직업 정보를 옮긴 거예요.</p>
+            </div>
+          </div>
 
-          <TraitCompare traits={job.traits} hasMatch={hasMatch} />
-          <AskAi job={job} />
-          <Steps steps={job.steps} />
-          <SimilarJobs jobs={job.similar} from={from} />
-
-          <p className="roadmap-source">로드맵 내용은 커리어넷 직업 정보를 옮긴 거예요.</p>
-        </>
+          <div className="job-side">
+            <section className="job-match" aria-label="나와 맞는 정도">
+              {hasMatch ? (
+                <>
+                  <MatchMeter match={job.match} size="large" />
+                  <p>지금까지 반응한 카드로 계산했어요. 카드에 반응할수록 바뀔 수 있어요.</p>
+                </>
+              ) : (
+                <p>
+                  오늘의 카드에 반응하면 이 직업이 나와 얼마나 맞는지 알려 드려요.{' '}
+                  <Link to="/home">카드 보러 가기</Link>
+                </p>
+              )}
+            </section>
+            <div className="job-similar-wrap">
+              <SimilarJobs jobs={job.similar} from={from} />
+            </div>
+          </div>
+        </div>
       )}
     </AppLayout>
   )
