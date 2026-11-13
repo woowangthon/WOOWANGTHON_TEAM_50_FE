@@ -21,8 +21,8 @@ export default function BrandLogo({ decorative = false }) {
         {/* 삼각대 */}
         <path d="M22.5 27.5 15.5 43M22.5 27.5V43M22.5 27.5 29.5 43" />
       </g>
-      {/* 반짝임 */}
-      <path d="M48 1.5l1.3 3.9 3.9 1.3-3.9 1.3L48 11.9l-1.3-3.9-3.9-1.3 3.9-1.3Z" fill="currentColor" />
+      {/* 반짝임 (옐로 포인트) */}
+      <path className="brand-logo-spark" d="M48 1.5l1.3 3.9 3.9 1.3-3.9 1.3L48 11.9l-1.3-3.9-3.9-1.3 3.9-1.3Z" />
       <text
         x="58"
         y="35"

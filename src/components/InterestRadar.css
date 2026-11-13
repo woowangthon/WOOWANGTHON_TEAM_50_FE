@@ -5,13 +5,14 @@
 .interest-radar-label { fill: var(--ink); font-size: 13px; font-weight: 650; }
 .interest-radar-code { fill: var(--moss); font-size: 11px; font-weight: 500; }
 .interest-radar-area { fill: var(--olive-wash); stroke: var(--pine); stroke-width: 2; stroke-linejoin: round; }
-.interest-radar-dot { fill: var(--pine); stroke: var(--paper); stroke-width: 1.5; }
+/* 점수 위치: 노란 별 + 네이비 테두리 */
+.interest-radar-star { fill: var(--yellow); stroke: var(--navy); stroke-width: 1.2; stroke-linejoin: round; }
 .interest-radar figcaption { color: var(--soft-text); font-size: 12px; line-height: 1.6; text-align: center; }
 .interest-radar figcaption span { display: block; }
 .interest-radar.is-interactive .interest-radar-grid,
 .interest-radar.is-interactive .interest-radar-axis,
 .interest-radar.is-interactive .interest-radar-area,
-.interest-radar.is-interactive .interest-radar-dot { pointer-events: none; }
+.interest-radar.is-interactive .interest-radar-star { pointer-events: none; }
 .interest-radar-option { cursor: pointer; }
 .interest-radar-sector, .interest-radar-label-target { fill: transparent; stroke: transparent; stroke-width: 2; }
 .interest-radar-option:hover .interest-radar-sector { fill: var(--olive-hover); }

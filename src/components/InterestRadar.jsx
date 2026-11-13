@@ -13,6 +13,15 @@ function polygonPoints(values) {
   return values.map((value, index) => point(index, RADIUS * value).join(',')).join(' ')
 }
 
+// 점수 위치에 찍는 다섯 꼭짓점 별 (바깥 반지름 R, 안쪽 반지름 r).
+function starPoints(cx, cy, R = 7.5, r = 3.3) {
+  return Array.from({ length: 10 }, (_, i) => {
+    const radius = i % 2 === 0 ? R : r
+    const angle = (i * Math.PI) / 5 - Math.PI / 2
+    return `${(cx + Math.cos(angle) * radius).toFixed(2)},${(cy + Math.sin(angle) * radius).toFixed(2)}`
+  }).join(' ')
+}
+
 function sectorPoints(index) {
   const vertex = point(index, RADIUS)
   const previous = point((index + 5) % 6, RADIUS)
@@ -75,7 +84,7 @@ export default function InterestRadar({ traits = [], selectedCode, onSelect, des
         {showScores && <polygon points={polygonPoints(scores.map((trait) => trait.score))} className="interest-radar-area" />}
         {showScores && scores.map((trait, index) => {
           const [cx, cy] = point(index, RADIUS * trait.score)
-          return <circle key={trait.code} cx={cx} cy={cy} r="3.5" className="interest-radar-dot" />
+          return <polygon key={trait.code} points={starPoints(cx, cy)} className="interest-radar-star" />
         })}
       </svg>
       <figcaption>

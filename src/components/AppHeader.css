@@ -54,7 +54,7 @@
 
 .app-nav-link:hover { color: var(--ink); }
 .app-nav-link.active { color: var(--ink); font-weight: 700; }
-.app-nav-link.active::after { background: var(--olive); }
+.app-nav-link.active::after { height: 4px; background: var(--yellow); }
 
 /* 프로필 메뉴 */
 .app-profile {
