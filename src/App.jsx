@@ -2,6 +2,8 @@ import { BrowserRouter, Navigate, Route, Routes, useLocation, useParams } from '
 import AuthProvider from './auth/AuthProvider.jsx'
 import RequireAuth from './auth/RequireAuth.jsx'
 import RequireInterestSurvey from './auth/RequireInterestSurvey.jsx'
+import ServerWakeNotice from './components/ServerWakeNotice.jsx'
+import Chat from './pages/Chat.jsx'
 import Home from './pages/Home.jsx'
 import JobDetail from './pages/JobDetail.jsx'
 import Jobs from './pages/Jobs.jsx'
@@ -31,11 +33,14 @@ function App() {
           <Route path="/home" element={signedIn(<Home />)} />
           <Route path="/jobs" element={signedIn(<Jobs />)} />
           <Route path="/jobs/:jobId" element={signedIn(<JobDetail />)} />
+          {/* 새 대화(/chat)와 이어지는 대화(/chat/:chatId)가 같은 화면을 써야 보내는 중에 화면이 새로 시작되지 않습니다. */}
+          <Route path="/chat/:chatId?" element={signedIn(<Chat />)} />
           <Route path="/report" element={signedIn(<Report />)} />
           <Route path="/saved" element={signedIn(<Saved />)} />
           <Route path="/roadmap/:jobId" element={<LegacyRoadmap />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
+        <ServerWakeNotice />
       </BrowserRouter>
     </AuthProvider>
   )

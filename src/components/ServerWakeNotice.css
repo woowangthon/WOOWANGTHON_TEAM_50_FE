@@ -1,0 +1,45 @@
+.server-wake {
+  position: fixed;
+  right: 0;
+  bottom: 16px;
+  left: 0;
+  z-index: 50;
+  display: flex;
+  justify-content: center;
+  padding: 0 16px;
+  pointer-events: none;
+}
+
+.server-wake-toast {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 420px;
+  margin: 0;
+  padding: 12px 16px;
+  border-radius: 14px;
+  color: #fff;
+  background: var(--ink);
+  box-shadow: 0 10px 30px #1a423340;
+  font-size: 14px;
+  line-height: 1.5;
+  animation: wake-in 0.24s ease-out;
+}
+
+.server-wake-dot {
+  flex: none;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #7fc4a6;
+  animation: wake-pulse 1.2s ease-in-out infinite;
+}
+
+@keyframes wake-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes wake-pulse {
+  50% { opacity: 0.3; }
+}

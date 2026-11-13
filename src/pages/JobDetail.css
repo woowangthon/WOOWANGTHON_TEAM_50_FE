@@ -196,6 +196,109 @@
 .roadmap-step strong { color: var(--pine-deep); font-size: 15px; }
 .roadmap-step ul li span { color: #33463f; }
 
+/* AI 동료에게 물어보기 */
+.job-ask-lead {
+  margin: -4px 0 14px;
+  color: var(--soft-text);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.job-ask-list {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+}
+
+.job-ask-question {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  width: 100%;
+  min-height: 48px;
+  padding: 10px 16px;
+  border: 1px solid var(--field-line);
+  border-radius: 14px;
+  color: var(--ink);
+  background: var(--paper);
+  font-size: 15px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.job-ask-question::after {
+  content: '';
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-right: 2px solid var(--leaf);
+  border-bottom: 2px solid var(--leaf);
+  transform: rotate(45deg) translateY(-2px);
+  transition: transform 0.2s ease;
+}
+
+.job-ask-question[aria-expanded='true'] { border-color: var(--leaf); background: var(--mist); }
+.job-ask-question[aria-expanded='true']::after { transform: rotate(-135deg) translateY(-2px); }
+.job-ask-question:hover { border-color: var(--leaf); }
+
+.job-ask-answer {
+  margin: 6px 0 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: var(--dew);
+}
+
+.job-ask-answer p {
+  margin: 0;
+  color: var(--ink);
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+.job-ask-answer.is-loading { color: var(--soft-text); font-size: 14px; }
+
+.job-ask-source {
+  display: block;
+  margin-top: 8px;
+  color: var(--moss);
+  font-size: 12px;
+}
+
+.job-ask-error {
+  margin: 6px 0 0;
+  color: var(--danger);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.job-ask-error button {
+  min-height: 32px;
+  padding: 4px 10px;
+  border: 1px solid var(--danger);
+  border-radius: 8px;
+  color: var(--danger);
+  background: var(--paper);
+  font-size: 13px;
+}
+
+.job-ask-chat {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 8px 16px;
+  border-radius: 12px;
+  color: #fff;
+  background: var(--pine);
+  font-size: 14px;
+  font-weight: 650;
+  text-decoration: none;
+}
+
+.job-ask-chat:hover { background: var(--pine-deep); }
+
 /* 비슷한 직업 */
 .job-similar {
   display: grid;

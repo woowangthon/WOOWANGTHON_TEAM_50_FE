@@ -2,7 +2,9 @@
 // docs/backend-api-guide.txt의 변수 이름(VITE_API_URL, VITE_SUPABASE_PUBLISHABLE_KEY)도 함께 읽습니다.
 const env = import.meta.env
 
-export const API_BASE_URL = (env.VITE_API_BASE_URL || env.VITE_API_URL || 'http://localhost:8000').replace(/\/$/, '')
+// 주소를 따로 넣지 않으면 배포 서버(Render)로 연결합니다. 로컬 백엔드를 쓸 때는 VITE_API_URL=http://localhost:8000
+export const DEFAULT_API_URL = 'https://findme-api-rxg3.onrender.com'
+export const API_BASE_URL = (env.VITE_API_BASE_URL || env.VITE_API_URL || DEFAULT_API_URL).replace(/\/$/, '')
 export const SUPABASE_URL = env.VITE_SUPABASE_URL || 'https://fbctzysvmyedxvucopxt.supabase.co'
 export const SUPABASE_ANON_KEY = env.VITE_SUPABASE_PUBLISHABLE_KEY || env.VITE_SUPABASE_ANON_KEY || ''
 

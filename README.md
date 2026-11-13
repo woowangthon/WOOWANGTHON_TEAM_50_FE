@@ -166,7 +166,10 @@ src/
 
 ## 8. 백엔드 연동
 
-백엔드(`WOOWANGTHON_TEAM_50_BE`) 기준으로 연결했습니다. 요청·응답 형식은 [`docs/backend-api-guide.txt`](docs/backend-api-guide.txt)와 백엔드 서버의 `/docs`(Swagger)를 기준으로 합니다.
+백엔드(`WOOWANGTHON_TEAM_50_BE`) 기준으로 연결했습니다. 요청·응답 형식은 백엔드 서버의 `/docs`(Swagger)를 기준으로 합니다. ([`docs/backend-api-guide.txt`](docs/backend-api-guide.txt)는 2026-11-09 기준이라 오래됐습니다)
+
+- **배포 서버:** https://findme-api-rxg3.onrender.com (`VITE_API_URL`을 비워 두면 이 주소로 연결합니다)
+- Render 무료 플랜이라 15분 동안 요청이 없으면 서버가 잠들고, 깨어나는 첫 요청이 50초쯤 걸립니다. 로그인 화면을 열 때 `/health`로 미리 깨우고, 요청이 4초 넘게 걸리면 화면 아래에 "서버를 깨우고 있어요" 안내를 띄웁니다. (`src/components/ServerWakeNotice.jsx`)
 
 ### 인증 흐름
 
@@ -187,23 +190,33 @@ src/
 | 저장한 카드 | GET | `/me/saved` (최근 순, 카드에 `job_id` 포함) | 저장한 카드 |
 | 카드 저장·저장 취소 | PUT·DELETE | `/me/saved/{card_id}` (둘 다 204) | 홈, 저장한 카드 |
 | 성향 리포트 | GET | `/me/report` (`ready=false`면 `remaining`만 사용, 직업마다 `match`) | 내 리포트 |
+| 설문 완료 여부 | GET | `/interest-survey` (`done`) | 모든 로그인 후 화면 (설문 확인) |
 | 관심사 설문 반영 | POST | `/interest-survey` (`{ version, answers }`, 사용자당 1회) | 관심사 설문 |
 | 직업 목록 | GET | `/jobs?field=&limit=` (적합도 높은 순, `limit` 최대 100) | 직업 탐색 |
-| 직업 상세 | GET | `/jobs/{job_id}` (적합도, 핵심 성향 비교, 준비 단계, 비슷한 직업) | 직업 상세 |
+| 직업 상세 | GET | `/jobs/{job_id}` (적합도, 핵심 성향 비교, 준비 단계, 비슷한 직업, AI에게 물어볼 `questions`) | 직업 상세 |
+| 직업 질문 답변 | POST | `/jobs/{job_id}/ask` (`{ question_id }`, 정해진 질문 4개만. 응답 `answer`, `by_ai`) | 직업 상세 |
+| AI 진로 동료 대화 | POST | `/chat` (`{ messages }` 최근 20개, 학생 말 300자 이내. 응답 `reply`, `suggestions`, `by_ai`) | AI 동료 |
 
 `GET /me/roadmap`, `GET /me/roadmap/{job_id}`는 더 쓰지 않습니다. 준비 단계가 `GET /jobs/{job_id}`의 `steps`와 같아서 직업 상세 화면으로 합쳤습니다.
 
-백엔드의 `GET /onboarding`(가입 설문 카드 5장)은 쓰지 않습니다. 가입 설문은 FE의 12문항 관심사 설문(`/interests`)을 사용합니다.
+가입 설문은 FE의 12문항 관심사 설문(`/interests`) 하나만 씁니다. 예전 선택형 카드 5장 설문(`GET /onboarding`)은 백엔드에서 삭제됐습니다.
 
 ### 화면 흐름
 
 ```text
 / (로그인·회원가입) → /interests (설문 미완료 시) → /home → 프로필 없으면 /profile → 저장 후 /home
 
-로그인 후 상단 메뉴: 오늘의 카드(/home) · 직업 탐색(/jobs) · 내 리포트(/report) · 저장한 카드(/saved)
+로그인 후 상단 메뉴: 오늘의 카드(/home) · 직업 탐색(/jobs) · AI 동료(/chat) · 내 리포트(/report) · 저장한 카드(/saved)
 직업 상세(/jobs/:jobId): 피드의 직업 카드, 직업 탐색, 내 리포트, 저장한 카드, 비슷한 직업에서 이동
+AI 동료(/chat, /chat/:chatId): 상단 메뉴, 직업 상세의 "AI 동료와 이야기 더 하기", 리포트의 "AI 동료에게 더 물어보기"에서 이동
 예전 주소 /roadmap/:jobId는 /jobs/:jobId로 넘어갑니다.
 ```
+
+- **AI 진로 동료:** 넓은 화면은 왼쪽에 대화 목록, 좁은 화면은 "대화 목록" 버튼으로 여는 서랍입니다. 대화마다 고정·삭제(확인 후)를 할 수 있고, 고정한 대화가 위에 옵니다.
+- **대화 기록은 이 브라우저에만 계정별로 저장됩니다** (`localStorage`의 `findme-chats:<사용자 ID>`, `src/lib/chatHistory.js`). 백엔드는 대화를 저장하지 않으므로 다른 기기에서는 보이지 않고, 로그아웃해도 지워지지 않습니다. 고정하지 않은 대화는 최근 50개, 대화 하나에는 최근 메시지 100개까지 남깁니다.
+- 대화를 보낼 때마다 최근 메시지 20개를 함께 보냅니다(서버 규칙). `by_ai`가 false인 답(Gemini 실패·키 없음, 위기 안내)에는 "AI 대신 내 기록으로 만든 답이에요"를 붙입니다. 하루 30회를 넘기면 429 `chat_limit` 안내가 나옵니다.
+- 한글 입력 중(조합 중)에는 Enter를 눌러도 보내지 않고, Shift+Enter는 줄바꿈입니다.
+- 직업 상세의 "AI 동료에게 물어보기"는 서버가 준 질문(`questions`)만 버튼으로 보여 줍니다. 성향이 아직 없으면 "왜 나와 이만큼 맞나요?"는 빠집니다.
 
 - 카드는 끌려요·별로예요(선택형은 선택지)를 누르면 다음으로 넘어갑니다. 넘기기는 없습니다.
 - **카드는 하루 5장입니다.** `/me/journey`의 `daily_goal`(5)과 `today_count`(오늘 반응 수, 한국 시간)로 판단해, 5장을 고르면 오늘의 카드를 닫고 "내일 새 카드" 안내를 보여 줍니다. 백엔드는 `daily_goal`을 목표로만 두고 `/feed`를 막지 않으므로, 상한은 화면에서만 적용됩니다. 여정을 못 불러오면 막지 않습니다.
@@ -222,13 +235,17 @@ src/
 `.env.example`을 `.env.local`로 복사해 값을 채웁니다. (Vite에서는 `VITE_` 접두사가 필요하고, `.env.local`은 GitHub에 올라가지 않습니다)
 
 ```text
-VITE_API_URL=http://localhost:8000
+VITE_API_URL=https://findme-api-rxg3.onrender.com   # 비워 두면 이 주소. 로컬 백엔드는 http://localhost:8000
 VITE_SUPABASE_URL=https://fbctzysvmyedxvucopxt.supabase.co
 VITE_SUPABASE_PUBLISHABLE_KEY=   # publishable 키만. sb_secret_ 키는 절대 넣지 않기
 VITE_USE_MOCK=false
 ```
 
 publishable 키가 비어 있으면 **목업 모드**로 동작합니다. 백엔드 없이 아무 이메일로 가입·로그인할 수 있고, 데이터는 브라우저에만 저장됩니다. (`src/mocks/`)
+
+- 목업 데이터 `src/mocks/data.js`는 백엔드 `scripts/export_mock.py`와 같은 형식(`ATTRIBUTES` · `TABLES` · `JOBS` · `CARDS`)입니다. 지금은 카드 12장·직업 8개만 들어 있고, 직업 점수와 문구 표(레벨·미션·AI 질문 등)는 백엔드 실제 값입니다. 백엔드 스크립트로 다시 내보내면 실제 카드 전체로 바뀝니다. (2026-11-13 기준 그 스크립트는 30번째 줄 문법 오류로 실행되지 않습니다)
+- 직업 준비 단계(커리어넷 직업 안내)는 내보내기 형식에 없어서 `src/mocks/guides.js`에 따로 둡니다.
+- 목업의 AI 답변은 Gemini를 흉내 내지 않고, 백엔드가 Gemini 없이 쓰는 대체 답변(`by_ai: false`)을 그대로 씁니다.
 
 ---
 
@@ -237,9 +254,9 @@ publishable 키가 비어 있으면 **목업 모드**로 동작합니다. 백엔
 - 회원가입 후 세션이 생기거나 로그인하면, 설문을 완료하지 않은 계정은 `/interests`로 먼저 이동합니다. 이메일 인증이 필요한 경우 인증 후 로그인할 때 표시합니다.
 - 질문은 12개이고 4개씩 3단계로 표시합니다. 각 질문에 `전혀 하고 싶지 않아요 / 별로 하고 싶지 않아요 / 보통이에요 / 조금 해보고 싶어요 / 정말 해보고 싶어요` 중 하나를 선택합니다. 미리 선택된 답변은 없습니다.
 - 완료하면 기존 프로필 입력 → 홈 흐름으로 이어집니다. 이미 프로필이 있는 사용자는 홈으로 이동합니다. 설문을 완료한 계정은 다음 로그인 때 건너뜁니다.
-- **현재 답변·임시 저장·완료 여부는 브라우저 localStorage에 계정 ID별로 저장됩니다.** 브라우저 저장 공간을 지우거나 다른 기기에서 로그인하면 다시 표시됩니다. 서버 저장과 카드 추천 반영은 아직 연결하지 않았습니다.
-- 답변은 점수로 환산하지 않고 질문 ID별 선택 값으로 저장합니다. 저장 형식은 `{ version: 1, answers: { make: 'like', ... }, completedAt: 'ISO 날짜 또는 null' }`입니다. `src/lib/interestSurvey.js`에서 문항·선택지·저장을 관리합니다.
-- 백엔드 연동 시 설문 답변 저장·조회와 완료 여부 조회 API를 추가하고, 사용자 ID는 인증 토큰으로 확인해야 합니다. 기존 `/me`는 닉네임·학년만 받으므로 임의의 설문 필드를 보내지 않습니다. 설문 저장 성공 후 첫 `/feed`에 답변을 반영하도록 백엔드와 계약을 맞춰야 합니다.
+- 마지막 단계에서 답을 `POST /interest-survey`로 보내 흥미 점수에 반영하고, 성공해야 완료로 기록합니다.
+- **완료 여부는 서버(`GET /interest-survey`의 `done`)가 기준입니다.** 이 브라우저에 완료 기록이 있으면 바로 넘어가고, 없으면 서버에 물어봅니다. 서버가 이미 했다고 하면 이 브라우저에도 기록하고 넘어가므로, 다른 기기에서 로그인하거나 브라우저 저장소를 지워도 설문이 다시 뜨지 않습니다. (`src/auth/RequireInterestSurvey.jsx`)
+- 진행 중 답변(임시 저장)은 브라우저 localStorage에 계정 ID별로 저장합니다. 저장 형식은 `{ version: 1, answers: { make: 'like', ... }, completedAt: 'ISO 날짜 또는 null' }`입니다. `src/lib/interestSurvey.js`에서 문항·선택지·저장을 관리합니다.
 - 저장·계정 분리·잘못된 데이터 처리는 `node --test tests/interestSurvey.test.mjs`로 확인합니다.
 
 ## 9. 시작하기

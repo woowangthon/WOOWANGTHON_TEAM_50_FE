@@ -61,6 +61,22 @@
   line-height: 1.65;
 }
 
+.report-summary-chat {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  margin-top: 16px;
+  padding: 8px 14px;
+  border: 1px solid #ffffff66;
+  border-radius: 10px;
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.report-summary-chat:hover { background: #ffffff1a; }
+
 /* 섹션 */
 .report-section {
   margin-top: 28px;

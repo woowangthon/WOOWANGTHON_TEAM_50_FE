@@ -5,6 +5,7 @@ import './AppHeader.css'
 const NAV_ITEMS = [
   { to: '/home', label: '오늘의 카드' },
   { to: '/jobs', label: '직업 탐색' },
+  { to: '/chat', label: 'AI 동료' },
   { to: '/report', label: '내 리포트' },
   { to: '/saved', label: '저장한 카드' },
 ]
