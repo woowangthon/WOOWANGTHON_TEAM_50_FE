@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ApiError, errorMessage } from '../api/client.js'
 import { createMe, getMe, updateMe } from '../api/me.js'
 import MockNotice from '../components/MockNotice.jsx'
+import BrandLogo from '../components/BrandLogo.jsx'
 import PageStatus from '../components/PageStatus.jsx'
 import './Login.css'
 import './ProfileSetup.css'
@@ -23,7 +24,6 @@ const COPY = {
   },
   edit: {
     title: '프로필 수정',
-    description: '닉네임과 학년을 바꿀 수 있어요.',
     submit: '변경 내용 저장',
   },
 }
@@ -118,15 +118,14 @@ export default function ProfileSetup() {
 
   return (
     <main className="login-page">
-      <div className="login-brand" aria-label="FindME">
-        <span className="brand-symbol" aria-hidden="true">f.</span>
-        <span>Find<span className="brand-accent">ME</span></span>
+      <div className="login-brand">
+        <BrandLogo />
       </div>
 
       <section className="login-card" aria-labelledby="profile-title">
-        <header className="login-header">
+        <header className={`login-header${mode === 'edit' ? ' profile-edit-header' : ''}`}>
           <h1 id="profile-title">{copy.title}</h1>
-          <p className="login-description">{copy.description}</p>
+          {copy.description && <p className="login-description">{copy.description}</p>}
         </header>
 
         <form className="login-form" onSubmit={handleSubmit} noValidate>
@@ -134,7 +133,7 @@ export default function ProfileSetup() {
             <div className="profile-label-row">
               <label htmlFor="nickname">닉네임</label>
               <span className="profile-counter" aria-hidden="true">
-                {nickname.trim().length}/{NICKNAME_MAX}
+                {nickname.length}/{NICKNAME_MAX}
               </span>
             </div>
             <input
@@ -142,11 +141,11 @@ export default function ProfileSetup() {
               name="nickname"
               type="text"
               autoComplete="nickname"
-              maxLength={NICKNAME_MAX + 10}
+              maxLength={NICKNAME_MAX}
               placeholder="예: 탐험가 민지"
               value={nickname}
               onChange={(event) => {
-                setNickname(event.target.value)
+                setNickname(event.target.value.slice(0, NICKNAME_MAX))
                 setMessage('')
               }}
               onBlur={() => setTouched(true)}
@@ -157,12 +156,12 @@ export default function ProfileSetup() {
             {nicknameError ? (
               <p id="nickname-error" className="field-error" aria-live="polite">{nicknameError}</p>
             ) : (
-              <p id="nickname-hint" className="field-hint">실명 대신 친구들이 부르는 별명을 써도 좋아요.</p>
+              <p id="nickname-hint" className="field-hint">친구들이 부르는 별명을 써도 좋아요.</p>
             )}
           </div>
 
           <fieldset className="profile-grade">
-            <legend>학년 <span>(선택)</span></legend>
+            <legend>학년</legend>
             <div className="profile-grade-options">
               {GRADES.map((option) => (
                 <label key={option.label} className="profile-grade-option">
@@ -186,7 +185,7 @@ export default function ProfileSetup() {
 
         {mode === 'edit' && (
           <p className="login-switch">
-            <Link to="/home" className="profile-cancel">수정하지 않고 돌아가기</Link>
+            <Link to="/home" className="profile-cancel">돌아가기</Link>
           </p>
         )}
       </section>

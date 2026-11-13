@@ -8,29 +8,11 @@
 }
 
 .app-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  color: var(--ink);
-  font-size: 20px;
-  font-weight: 750;
-  letter-spacing: -0.8px;
+  display: block;
+  width: 104px;
+  flex-shrink: 0;
   text-decoration: none;
 }
-
-.app-brand-symbol {
-  display: grid;
-  place-items: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 9px;
-  color: #fff;
-  background: var(--pine);
-  font-family: Georgia, serif;
-  font-size: 18px;
-}
-
-.app-brand-accent { color: var(--leaf); }
 
 .app-header-action {
   min-height: 40px;
@@ -46,29 +28,27 @@
 
 .app-nav {
   display: grid;
-  grid-template-columns: repeat(5, 1fr);
+  grid-template-columns: repeat(6, minmax(0, 1fr));
   gap: 4px;
   margin-top: 14px;
-  padding: 4px;
-  border-radius: 12px;
-  background: var(--mist);
+  padding: 4px 0 12px;
+  border-bottom: 1px solid var(--line);
+  background: var(--paper);
 }
 
-/* 메뉴 5개가 한 줄에 들어가지 않는 좁은 화면에서는 위 3개 · 아래 2개로 나눕니다. (6칸 격자에서 2칸 · 3칸씩) */
+/* 좁은 화면에서는 여섯 메뉴를 3개씩 두 줄로 배치합니다. */
 @media (max-width: 540px) {
-  .app-nav { grid-template-columns: repeat(6, 1fr); }
-  .app-nav-link { grid-column: span 2; }
-  .app-nav-link:nth-child(n + 4) { grid-column: span 3; }
+  .app-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 }
 
 .app-nav-link {
   display: grid;
   place-items: center;
   min-height: 40px;
-  padding: 6px 8px;
+  padding: 6px 4px;
   border-radius: 9px;
   color: var(--soft-text);
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   text-align: center;
   text-decoration: none;
@@ -78,7 +58,6 @@
 .app-nav-link:hover { color: var(--pine); }
 
 .app-nav-link.active {
-  color: var(--pine);
-  background: var(--paper);
-  box-shadow: 0 1px 4px #1a423314;
+  color: var(--brown);
+  background: var(--cream);
 }

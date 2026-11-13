@@ -4,6 +4,8 @@ import { errorMessage } from '../api/client.js'
 import { sendChat } from '../api/coach.js'
 import { useAuth } from '../auth/AuthContext.js'
 import AppLayout from '../components/AppLayout.jsx'
+import ReadableText from '../components/ReadableText.jsx'
+import UiIcon from '../components/UiIcon.jsx'
 import {
   CHAT_STARTERS,
   MAX_USER_CHARS,
@@ -56,12 +58,13 @@ function ChatItem({ chat, active, confirming, onOpen, onPin, onAskDelete, onDele
             <button
               type="button"
               aria-pressed={chat.pinned}
-              aria-label={chat.pinned ? `${chat.title} 고정 해제` : `${chat.title} 고정`}
+              aria-label={chat.pinned ? `${chat.title} 핀 해제` : `${chat.title} 핀`}
+              title={chat.pinned ? '핀 해제' : '핀'}
               onClick={onPin}
             >
-              {chat.pinned ? '고정 해제' : '고정'}
+              <UiIcon name={chat.pinned ? 'pin-off' : 'pin'} size={18} />
             </button>
-            <button type="button" aria-label={`${chat.title} 삭제`} onClick={onAskDelete}>삭제</button>
+            <button type="button" aria-label={`${chat.title} 삭제`} title="삭제" onClick={onAskDelete}><UiIcon name="trash" size={18} /></button>
           </div>
         </>
       )}
@@ -222,7 +225,7 @@ function ChatScreen({ userId }) {
 
           {pinned.length > 0 && (
             <section className="chat-group" aria-labelledby="chat-pinned-title">
-              <h2 id="chat-pinned-title">고정한 대화</h2>
+              <h2 id="chat-pinned-title">핀한 대화</h2>
               <ul>{pinned.map(renderItem)}</ul>
             </section>
           )}
@@ -232,7 +235,6 @@ function ChatScreen({ userId }) {
             {recent.length > 0 ? <ul>{recent.map(renderItem)}</ul> : <p className="chat-group-empty">아직 나눈 대화가 없어요.</p>}
           </section>
 
-          <p className="chat-sidebar-note">대화는 서버에 남지 않고 이 브라우저에만 저장돼요.</p>
         </aside>
 
         <section className="chat-main" aria-labelledby="chat-title">
@@ -274,7 +276,9 @@ function ChatScreen({ userId }) {
                     <span className={message.role === 'user' ? 'visually-hidden' : 'chat-speaker'}>
                       {message.role === 'user' ? '나:' : 'AI 동료'}
                     </span>
-                    <p className="chat-bubble">{message.text}</p>
+                    {message.role === 'ai'
+                      ? <ReadableText className="chat-bubble" text={message.text} />
+                      : <p className="chat-bubble">{message.text}</p>}
                     {message.role === 'ai' && message.byAi === false && (
                       <span className="chat-source">AI 대신 내 기록으로 만든 답이에요</span>
                     )}
@@ -335,10 +339,11 @@ function ChatScreen({ userId }) {
               </div>
             </form>
 
-            <p className="chat-disclaimer">
-              AI 동료는 내 반응 기록과 커리어넷 자료로 이야기하지만 틀릴 수 있어요. 중요한 결정은 선생님·보호자와 함께해요.
-              많이 힘들 땐 청소년상담전화 1388에 이야기해 보세요.
-            </p>
+            <div className="chat-disclaimer">
+              <p>AI 동료는 내 반응 기록과 커리어넷 자료로 이야기하지만 틀릴 수 있어요.</p>
+              <p>중요한 결정은 선생님·보호자와 함께해요.</p>
+              <p>많이 힘들 땐 청소년상담전화 1388에 이야기해 보세요.</p>
+            </div>
           </div>
         </section>
       </div>

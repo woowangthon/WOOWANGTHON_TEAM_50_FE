@@ -4,6 +4,7 @@ import { errorMessage } from '../api/client.js'
 import { submitInterestSurvey } from '../api/interestSurvey.js'
 import { useAuth } from '../auth/AuthContext.js'
 import AppHeader from '../components/AppHeader.jsx'
+import SurveyFace from '../components/SurveyFace.jsx'
 import {
   INTEREST_OPTIONS,
   INTEREST_QUESTIONS,
@@ -111,7 +112,7 @@ function SurveyForm({ userId }) {
         <header className="interest-intro">
           <p className="interest-eyebrow">나를 알아가는 첫걸음</p>
           <h1>어떤 활동에 마음이 가나요?</h1>
-          <p>잘하는지는 상관없어요.<br />지금 해보고 싶은 정도를 편하게 골라주세요.</p>
+          <p>잘하는지는 상관없어요.<br />표정을 눌러 지금 해보고 싶은 정도를 골라주세요.</p>
         </header>
 
         <div className="interest-progress">
@@ -141,15 +142,17 @@ function SurveyForm({ userId }) {
                 </legend>
                 <div className="interest-options">
                   {INTEREST_OPTIONS.map((option) => (
-                    <label className="interest-option" key={option.value}>
+                    <label className="interest-option" key={option.value} title={option.label}>
                       <input
                         type="radio"
                         name={question.id}
                         value={option.value}
+                        aria-label={option.label}
                         checked={answers[question.id] === option.value}
                         onChange={() => selectAnswer(question.id, option.value)}
                       />
-                      <span>{option.label}</span>
+                      <SurveyFace value={option.value} />
+                      <span className="interest-option-caption" aria-hidden="true">{option.shortLabel}</span>
                     </label>
                   ))}
                 </div>

@@ -4,11 +4,11 @@ export const SURVEY_VERSION = 1
 
 // 답변은 점수로 계산하지 않고 선택한 값 그대로 보관합니다.
 export const INTEREST_OPTIONS = [
-  { value: 'strongly_dislike', label: '전혀 하고 싶지 않아요' },
-  { value: 'dislike', label: '별로 하고 싶지 않아요' },
-  { value: 'neutral', label: '보통이에요' },
-  { value: 'like', label: '조금 해보고 싶어요' },
-  { value: 'strongly_like', label: '정말 해보고 싶어요' },
+  { value: 'strongly_dislike', label: '전혀 하고 싶지 않아요', shortLabel: '전혀' },
+  { value: 'dislike', label: '별로 하고 싶지 않아요', shortLabel: '별로' },
+  { value: 'neutral', label: '보통이에요', shortLabel: '보통' },
+  { value: 'like', label: '조금 해보고 싶어요', shortLabel: '조금' },
+  { value: 'strongly_like', label: '정말 해보고 싶어요', shortLabel: '정말' },
 ]
 
 // ID는 문구를 바꾸어도 유지합니다. 질문 구성이나 선택지가 바뀌면 버전을 올립니다.

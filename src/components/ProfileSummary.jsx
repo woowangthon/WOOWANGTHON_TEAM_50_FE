@@ -1,17 +1,14 @@
 import { Link } from 'react-router-dom'
+import InterestRadar from './InterestRadar.jsx'
+import InterestTypeLink from './InterestTypeLink.jsx'
+import { interestScores } from '../lib/interestTypes.js'
 import './ProfileSummary.css'
 
-const GROUPS = [
-  { key: 'interest', label: '흥미' },
-  { key: 'style', label: '일하는 방식' },
-  { key: 'value', label: '중요하게 여기는 것' },
-]
-
-function TraitBar({ trait }) {
+function TraitBar({ trait, rank }) {
   const percent = Math.round(trait.score * 100)
   return (
     <li className="trait">
-      <span className="trait-label">{trait.label}</span>
+      <span className="trait-label"><span className="trait-rank">{rank}</span>{trait.label}</span>
       <span className="trait-track" role="img" aria-label={`${trait.label} ${percent}%`}>
         <span className="trait-fill" style={{ width: `${percent}%` }} />
       </span>
@@ -21,7 +18,7 @@ function TraitBar({ trait }) {
 
 // persona(성향 유형)와 level은 GET /me/journey에서 옵니다. 못 불러왔으면 생략합니다.
 export default function ProfileSummary({ me, persona, level }) {
-  const topTraits = [...me.traits]
+  const topTraits = interestScores(me.traits)
     .filter((trait) => trait.score > 0.005)
     .sort((a, b) => b.score - a.score)
     .slice(0, 3)
@@ -63,25 +60,21 @@ export default function ProfileSummary({ me, persona, level }) {
       ) : (
         <>
           <h2 className="profile-summary-subtitle">지금까지 많이 끌린 성향</h2>
-          <ul className="trait-list">
-            {topTraits.map((trait) => <TraitBar key={trait.code} trait={trait} />)}
-          </ul>
-
-          <details className="trait-details">
-            <summary>11가지 성향 모두 보기</summary>
-            {GROUPS.map((group) => (
-              <div key={group.key} className="trait-group">
-                <h3>{group.label}</h3>
-                <ul className="trait-list">
-                  {me.traits
-                    .filter((trait) => trait.group === group.key)
-                    .map((trait) => <TraitBar key={trait.code} trait={trait} />)}
-                </ul>
-              </div>
-            ))}
-          </details>
+          <ol className="trait-list">
+            {topTraits.map((trait, index) => <TraitBar key={trait.code} trait={trait} rank={index + 1} />)}
+          </ol>
         </>
       )}
+      <details className="trait-details">
+        <summary className="interest-type-link">
+          6가지 흥미 유형 보기<span className="trait-details-chevron" aria-hidden="true">⌄</span>
+        </summary>
+        <div className="trait-group">
+          <h3>흥미 유형</h3>
+          <InterestRadar traits={me.traits} />
+        </div>
+      </details>
+      <InterestTypeLink />
     </section>
   )
 }

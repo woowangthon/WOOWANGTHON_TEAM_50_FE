@@ -5,6 +5,10 @@ import { getReport } from '../api/me.js'
 import AppLayout from '../components/AppLayout.jsx'
 import MajorList from '../components/MajorList.jsx'
 import MatchMeter from '../components/MatchMeter.jsx'
+import InterestTypeLink from '../components/InterestTypeLink.jsx'
+import ReadableText from '../components/ReadableText.jsx'
+import UiIcon from '../components/UiIcon.jsx'
+import { traitLabel } from '../lib/interestTypes.js'
 import './Report.css'
 
 // 리포트는 최소 개수 없이 끌려요나 선택형 답이 1개 이상이면 열립니다. 저장은 세지 않습니다.
@@ -18,7 +22,7 @@ function TraitChips({ traits }) {
   if (!traits.length) return <p className="report-muted">아직 뚜렷하지 않아요.</p>
   return (
     <ul className="report-chips">
-      {traits.map((trait) => <li key={trait.code}>{trait.label}</li>)}
+      {traits.map((trait) => <li key={trait.code}>{traitLabel(trait)}</li>)}
     </ul>
   )
 }
@@ -40,7 +44,7 @@ function ReadyReport({ report }) {
         <h2 id="report-summary-title" className="report-summary-source">
           {report.summary_by_ai ? 'AI 진로 동료가 정리한 내 성향' : '반응 기록으로 정리한 내 성향'}
         </h2>
-        <p className="report-summary-text">{report.summary}</p>
+        <ReadableText className="report-summary-text" text={report.summary} />
         <Link to="/chat" state={{ draft: '내 성향을 쉽게 설명해 줘' }} className="report-summary-chat">
           AI 동료에게 더 물어보기
         </Link>
@@ -50,6 +54,7 @@ function ReadyReport({ report }) {
         <div>
           <h2>끌린 흥미 유형</h2>
           <TraitChips traits={report.top_interests} />
+          <InterestTypeLink>흥미 유형 알아보기</InterestTypeLink>
         </div>
         <div>
           <h2>중요하게 여기는 것</h2>
@@ -84,8 +89,14 @@ function ReadyReport({ report }) {
                 )}
                 {job.summary && <p>{job.summary}</p>}
                 <MajorList majors={job.majors} />
-                <Link to={`/jobs/${job.job_id}`} state={{ from: '/report' }} className="report-job-link">
-                  {job.name} 자세히 보기
+                <Link
+                  to={`/jobs/${job.job_id}`}
+                  state={{ from: '/report' }}
+                  className="report-job-link"
+                  aria-label={`${job.name} 자세히 보기`}
+                  title={`${job.name} 자세히 보기`}
+                >
+                  <UiIcon name="search" />
                 </Link>
               </li>
             ))}
@@ -133,7 +144,7 @@ export default function Report() {
 
   return (
     <AppLayout>
-      <header className="page-head">
+      <header className="page-head report-page-head">
         <h1>내 성향 리포트</h1>
         <p>지금까지 카드에 반응한 기록으로 정리했어요. 반응할수록 내용이 바뀌어요.</p>
       </header>

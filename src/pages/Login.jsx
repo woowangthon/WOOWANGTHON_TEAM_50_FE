@@ -4,6 +4,7 @@ import { wakeServer } from '../api/client.js'
 import { useAuth } from '../auth/AuthContext.js'
 import { USE_MOCK } from '../lib/config.js'
 import MockNotice from '../components/MockNotice.jsx'
+import BrandLogo from '../components/BrandLogo.jsx'
 import { MIN_PASSWORD_LENGTH, validateLogin } from '../utils/validateLogin.js'
 import './Login.css'
 
@@ -112,9 +113,8 @@ export default function Login() {
 
   return (
     <main className="login-page">
-      <div className="login-brand" aria-label="FindME">
-        <span className="brand-symbol" aria-hidden="true">f.</span>
-        <span>Find<span className="brand-accent">ME</span></span>
+      <div className="login-brand">
+        <BrandLogo />
       </div>
 
       <section className="login-card" aria-labelledby="login-title">
@@ -169,7 +169,30 @@ export default function Login() {
                 aria-pressed={showPassword}
                 onClick={() => setShowPassword((previous) => !previous)}
               >
-                {showPassword ? '숨기기' : '보기'}
+                <svg
+                  width="22"
+                  height="22"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                  focusable="false"
+                >
+                  {showPassword ? (
+                    <>
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </>
+                  ) : (
+                    <>
+                      <path d="M3 9s3 6 9 6 9-6 9-6" />
+                      <path d="m5 12-2 3m6-1-1 4m7-4 1 4m3-6 2 3" />
+                    </>
+                  )}
+                </svg>
               </button>
             </div>
             {passwordError && <p id="password-error" className="field-error" aria-live="polite">{passwordError}</p>}

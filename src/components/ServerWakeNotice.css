@@ -18,9 +18,9 @@
   margin: 0;
   padding: 12px 16px;
   border-radius: 14px;
-  color: #fff;
+  color: var(--paper);
   background: var(--ink);
-  box-shadow: 0 10px 30px #1a423340;
+  box-shadow: 0 10px 30px var(--shadow-strong);
   font-size: 14px;
   line-height: 1.5;
   animation: wake-in 0.24s ease-out;
@@ -31,7 +31,7 @@
   width: 10px;
   height: 10px;
   border-radius: 50%;
-  background: #7fc4a6;
+  background: var(--ochre);
   animation: wake-pulse 1.2s ease-in-out infinite;
 }
 

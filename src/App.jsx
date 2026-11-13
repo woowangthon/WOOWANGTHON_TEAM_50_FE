@@ -12,6 +12,7 @@ import ProfileSetup from './pages/ProfileSetup.jsx'
 import Report from './pages/Report.jsx'
 import Saved from './pages/Saved.jsx'
 import InterestSurvey from './pages/InterestSurvey.jsx'
+import InterestTypes from './pages/InterestTypes.jsx'
 
 // 예전 로드맵 주소(/roadmap/:jobId)는 직업 상세로 합쳤습니다. 북마크해 둔 주소도 열리도록 넘겨 줍니다.
 function LegacyRoadmap() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/interests" element={<RequireAuth><InterestSurvey /></RequireAuth>} />
           <Route path="/profile" element={signedIn(<ProfileSetup />)} />
           <Route path="/home" element={signedIn(<Home />)} />
+          <Route path="/interest-types" element={signedIn(<InterestTypes />)} />
           <Route path="/jobs" element={signedIn(<Jobs />)} />
           <Route path="/jobs/:jobId" element={signedIn(<JobDetail />)} />
           {/* 새 대화(/chat)와 이어지는 대화(/chat/:chatId)가 같은 화면을 써야 보내는 중에 화면이 새로 시작되지 않습니다. */}

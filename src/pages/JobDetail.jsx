@@ -6,6 +6,9 @@ import { getJob } from '../api/jobs.js'
 import AppLayout from '../components/AppLayout.jsx'
 import MajorList from '../components/MajorList.jsx'
 import MatchMeter from '../components/MatchMeter.jsx'
+import InterestTypeLink from '../components/InterestTypeLink.jsx'
+import ReadableText from '../components/ReadableText.jsx'
+import { traitLabel } from '../lib/interestTypes.js'
 import './JobDetail.css'
 
 // 어디서 들어왔는지(location.state.from)에 따라 돌아가는 링크를 바꿉니다. 모르는 경로면 직업 탐색으로 보냅니다.
@@ -36,7 +39,7 @@ function TraitCompare({ traits, hasMatch }) {
       <ul className="roadmap-traits">
         {traits.map((trait) => (
           <li key={trait.code}>
-            <span className="roadmap-trait-label">{trait.label}</span>
+            <span className="roadmap-trait-label">{traitLabel(trait)}</span>
             <span className="roadmap-bars">
               <span className="roadmap-bar is-job" aria-hidden="true">
                 <span style={{ width: `${(Math.min(3, trait.level) / 3) * 100}%` }} />
@@ -48,10 +51,10 @@ function TraitCompare({ traits, hasMatch }) {
                 이 직업에서 중요한 정도 {LEVEL_TEXT[trait.level] ?? '높음'}, 내 성향 {trait.mine}%
               </span>
             </span>
-            {trait.definition && <p className="roadmap-trait-def">{trait.definition}</p>}
           </li>
         ))}
       </ul>
+      <InterestTypeLink>흥미 유형 알아보기</InterestTypeLink>
     </section>
   )
 }
@@ -130,7 +133,7 @@ function AskAi({ job }) {
                 {state?.status === 'loading' && <p className="job-ask-answer is-loading" role="status">답을 준비하고 있어요…</p>}
                 {state?.status === 'done' && (
                   <div className="job-ask-answer">
-                    <p>{state.answer}</p>
+                    <ReadableText text={state.answer} />
                     <span className="job-ask-source">{state.byAi ? 'AI 동료의 답' : 'AI 대신 자료와 내 기록으로 만든 답'}</span>
                   </div>
                 )}
