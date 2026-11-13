@@ -1,198 +1,116 @@
-.profile-summary {
-  padding: 22px 22px 18px;
-  border-radius: 18px;
-  background: var(--dew);
-}
-
-.profile-summary-head {
+/* 홈 왼쪽 '나의 탐색 프로필' 카드 (카드 공통 모양은 Home.css의 .home-card) */
+.profile-who {
   display: flex;
   align-items: center;
-  gap: 14px;
+  gap: 16px;
+  padding: 20px 0;
+  border-bottom: 1px solid var(--line);
 }
 
 .profile-avatar {
-  flex: none;
   display: grid;
+  flex: none;
   place-items: center;
-  width: 48px;
-  height: 48px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   color: var(--paper);
-  background: var(--pine);
-  font-size: 20px;
+  background: var(--olive);
+  font-size: 26px;
   font-weight: 700;
 }
 
-.profile-summary-name { flex: 1; min-width: 0; }
+.profile-who-text { min-width: 0; }
 
-.profile-summary-name h1 {
-  margin: 0;
+.profile-nickname {
+  margin: 0 0 2px;
   overflow: hidden;
   font-size: 20px;
-  font-weight: 700;
-  letter-spacing: -0.6px;
-  line-height: 1.35;
+  font-weight: 750;
+  letter-spacing: -0.5px;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-.profile-summary-name p { margin: 2px 0 0; color: var(--soft-text); font-size: 13px; }
+.profile-level { margin: 0; color: var(--olive-deep); font-size: 14px; font-weight: 600; }
 
-.profile-edit {
-  flex: none;
-  min-height: 40px;
-  display: inline-flex;
-  align-items: center;
-  padding: 8px 12px;
-  border-radius: 8px;
-  color: var(--pine);
-  background: var(--paper);
-  font-size: 13px;
-  font-weight: 600;
-  text-decoration: none;
-}
-
-.profile-edit:hover { background: var(--mist); }
-
-/* 성향 유형 (GET /me/journey의 persona) */
-.profile-persona {
-  margin-top: 16px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  background: var(--paper);
-}
+/* 성향 유형 + 많이 끌린 흥미 유형 */
+.profile-persona { padding: 20px 0; border-bottom: 1px solid var(--line); }
 
 .profile-persona-name {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 6px 10px;
   margin: 0 0 4px;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
-}
-
-.profile-persona-code {
-  padding: 2px 9px;
-  border-radius: 999px;
-  color: var(--brown);
-  background: var(--cream);
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.7px;
+  line-height: 1.35;
+  word-break: keep-all;
 }
 
 .profile-persona-tagline {
-  margin: 0;
+  margin: 0 0 18px;
   color: var(--soft-text);
   font-size: 14px;
   line-height: 1.6;
 }
 
-.profile-summary-empty {
-  margin: 18px 0 2px;
-  color: var(--soft-text);
-  font-size: 14px;
-  line-height: 1.6;
-}
+.profile-empty { margin: 0 0 12px; color: var(--soft-text); font-size: 14px; line-height: 1.6; }
+.profile-empty:last-child { margin-bottom: 0; }
 
-.profile-summary-subtitle {
-  margin: 20px 0 10px;
-  font-size: 14px;
-  font-weight: 650;
-}
-
-.trait-list {
+.profile-traits {
   display: grid;
-  gap: 10px;
+  gap: 14px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
-.trait {
+.profile-traits li {
   display: grid;
-  grid-template-columns: 96px 1fr;
+  grid-template-columns: 52px minmax(0, 1fr) 40px;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 }
 
-.trait-label { display: flex; align-items: center; gap: 8px; color: var(--ink); font-size: 14px; }
-.trait-rank { display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%; color: var(--pine); background: var(--paper); font-size: 11px; font-weight: 700; }
+.profile-trait-label { color: var(--ink); font-size: 14px; font-weight: 600; }
 
-.trait-track {
+.profile-trait-track {
+  display: block;
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: var(--track);
+  background: var(--mist);
 }
 
-.trait-fill {
+.profile-trait-track > span {
   display: block;
   height: 100%;
   min-width: 2px;
   border-radius: inherit;
-  background: var(--pine);
+  background: var(--olive);
   transition: width 0.5s ease;
 }
 
-/* '6가지 흥미 유형 보기'와 '흥미 유형 살펴보러 가기' 버튼 */
-.profile-actions {
-  display: grid;
-  justify-items: start;
-  gap: 12px;
-  margin-top: 16px;
-}
-
-.profile-actions .interest-type-link { margin-top: 0; }
-.profile-radar-toggle { font: inherit; font-size: 13px; cursor: pointer; }
-.trait-details-chevron { display: inline-block; transition: transform 120ms; }
-.profile-radar-toggle[aria-expanded='true'] .trait-details-chevron { transform: rotate(180deg); }
-
-/* 흥미 유형 그래프는 연두 바탕과 구분되도록 흰 카드 위에 그립니다. */
-.trait-group {
-  margin-top: 12px;
-  padding: 16px 16px 14px;
-  border: 1px solid var(--line);
-  border-radius: 16px;
-  background: var(--paper);
-  box-shadow: 0 2px 10px var(--shadow-soft);
-}
-
-.trait-group h3 {
-  margin: 0 0 8px;
-  color: var(--moss);
+.profile-trait-value {
+  color: var(--soft-text);
   font-size: 13px;
-  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
 }
 
-/* 웹: 가로로 긴 한 장 — 왼쪽 나·성향 유형 | 가운데 많이 끌린 성향 | 오른쪽 버튼, 그래프는 아래로 넓게 */
-@media (min-width: 960px) {
-  .profile-summary {
-    display: grid;
-    grid-template-columns: minmax(320px, 420px) minmax(0, 1fr) auto;
-    gap: 18px 40px;
-    align-items: start;
-    padding: 24px 28px;
-  }
+/* 아래 링크: 버튼 대신 밑줄 글자 링크 */
+.profile-card-foot { padding-top: 18px; }
 
-  .profile-traits .profile-summary-subtitle { margin-top: 2px; }
-  .profile-traits .profile-summary-empty { margin-top: 4px; }
-
-  .profile-actions {
-    justify-items: stretch;
-    min-width: 200px;
-    margin-top: 0;
-  }
-
-  .profile-summary > .trait-group { grid-column: 1 / -1; margin-top: 0; }
-  .profile-summary > .trait-group .interest-radar { max-width: 420px; }
+.profile-card-foot .interest-type-link {
+  min-height: 32px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
 
-@media (max-width: 480px) {
-  .profile-summary-head { display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 10px 12px; }
-  .profile-avatar { width: 40px; height: 40px; font-size: 18px; }
-  .profile-edit { grid-column: 2; justify-self: start; }
-  .profile-summary-name p { line-height: 1.65; }
-}
+.profile-card-foot .interest-type-link:hover { color: var(--olive-deep); background: none; }

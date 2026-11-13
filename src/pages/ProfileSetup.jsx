@@ -5,6 +5,7 @@ import { createMe, getMe, updateMe } from '../api/me.js'
 import MockNotice from '../components/MockNotice.jsx'
 import BrandLogo from '../components/BrandLogo.jsx'
 import PageStatus from '../components/PageStatus.jsx'
+import { forgetMe } from '../lib/profileCache.js'
 import './Login.css'
 import './ProfileSetup.css'
 
@@ -109,6 +110,7 @@ export default function ProfileSetup() {
       } else {
         await updateMe(body)
       }
+      forgetMe() // 헤더의 닉네임을 새로 받아 오도록
       navigate('/home', { replace: true })
     } catch (error) {
       setMessage(errorMessage(error))

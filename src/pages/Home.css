@@ -1,7 +1,8 @@
-/* 홈: 맨 위에 프로필을 가로로 넓게 두고, 그 아래 왼쪽 오늘의 카드 · 오른쪽 탐험 기록.
-   좁은 화면(휴대폰)에서는 프로필 → 오늘의 카드 → 탐험 기록 순서로 한 줄입니다. */
+/* 홈: 웹은 3단 (나의 탐색 프로필 | 오늘의 카드 | 나의 탐험 기록),
+   중간 폭은 왼쪽 카드 · 오른쪽 프로필과 탐험 기록, 휴대폰은 프로필 → 카드 → 탐험 기록 순서로 한 줄입니다. */
 .home-layout {
   display: grid;
+  gap: 24px;
   grid-template-areas:
     'profile'
     'feed'
@@ -12,19 +13,43 @@
 .home-feed { grid-area: feed; min-width: 0; }
 .home-journey { grid-area: journey; min-width: 0; }
 
-@media (min-width: 960px) {
+.home-feed .feed { margin-top: 0; }
+
+/* 왼쪽·오른쪽 칸의 공통 카드 모양 */
+.home-card {
+  padding: 22px 22px 20px;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: var(--paper);
+  box-shadow: 0 6px 20px var(--shadow-soft);
+}
+
+.home-card-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.profile-card .home-card-title { padding-bottom: 16px; border-bottom: 1px solid var(--line); }
+
+@media (min-width: 760px) {
   .home-layout {
-    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-columns: minmax(0, 1fr) 300px;
     grid-template-areas:
-      'profile profile'
+      'feed profile'
       'feed journey';
-    gap: 28px 36px;
+    grid-template-rows: auto 1fr;
+    gap: 24px 28px;
     align-items: start;
   }
+}
 
-  /* 2단에서는 칸 사이 간격을 격자가 맡으므로 각 블록의 위 여백을 없앱니다. */
-  .home-feed .feed,
-  .home-journey .journey { margin-top: 0; }
-
-  .home-journey .journey > h2 { font-size: 16px; }
+@media (min-width: 1180px) {
+  .home-layout {
+    grid-template-columns: 268px minmax(0, 1fr) 300px;
+    grid-template-rows: auto;
+    grid-template-areas: 'profile feed journey';
+    gap: 28px;
+  }
 }

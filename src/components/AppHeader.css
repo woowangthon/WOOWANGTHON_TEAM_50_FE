@@ -1,4 +1,4 @@
-/* 웹: 위쪽에 붙어 있는 한 줄 헤더 (로고 · 메뉴 · 로그아웃) */
+/* 웹: 위쪽에 붙어 있는 한 줄 헤더 (로고 · 메뉴 · 프로필) */
 .app-header {
   position: sticky;
   top: 0;
@@ -10,67 +10,140 @@
 .app-header-inner {
   display: flex;
   align-items: center;
-  gap: 28px;
-  min-height: 72px;
+  gap: 36px;
+  min-height: 76px;
 }
 
 .app-brand {
   display: block;
   flex-shrink: 0;
-  width: 92px;
+  width: 150px;
   text-decoration: none;
 }
 
-.app-header-action {
-  flex: none;
-  min-height: 40px;
-  margin-left: auto;
-  padding: 8px 14px;
-  border: 1px solid var(--line);
-  border-radius: 10px;
-  color: var(--soft-text);
-  background: var(--paper);
-  font-size: 14px;
-}
-
-.app-header-action:hover { background: var(--mist); }
-
+/* 메뉴: 지금 화면은 굵은 글자 + 아래 밑줄 */
 .app-nav {
   display: flex;
-  align-items: center;
-  gap: 4px;
+  align-items: stretch;
+  align-self: stretch;
+  gap: 6px;
 }
 
 .app-nav-link {
+  position: relative;
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
-  padding: 8px 14px;
-  border-radius: 10px;
+  padding: 0 14px;
   color: var(--soft-text);
-  font-size: 15px;
+  font-size: 16px;
   font-weight: 600;
   text-decoration: none;
   white-space: nowrap;
 }
 
-.app-nav-link:hover { color: var(--ink); background: var(--mist); }
-
-.app-nav-link.active {
-  color: var(--brown);
-  background: var(--cream);
+.app-nav-link::after {
+  content: '';
+  position: absolute;
+  right: 10px;
+  bottom: -1px;
+  left: 10px;
+  height: 3px;
+  border-radius: 3px 3px 0 0;
+  background: transparent;
 }
 
+.app-nav-link:hover { color: var(--ink); }
+.app-nav-link.active { color: var(--ink); font-weight: 700; }
+.app-nav-link.active::after { background: var(--olive); }
+
+/* 프로필 메뉴 */
+.app-profile {
+  position: relative;
+  flex: none;
+  margin-left: auto;
+  padding-left: 24px;
+  border-left: 1px solid var(--line);
+}
+
+.app-profile-button {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 48px;
+  padding: 4px 6px 4px 4px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--ink);
+  background: transparent;
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.app-profile-button:hover { background: var(--mist); }
+
+.app-profile-avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  color: var(--paper);
+  background: var(--olive);
+}
+
+.app-profile-name {
+  max-width: 9em;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-profile-chevron { display: grid; color: var(--soft-text); transition: transform 0.15s ease; }
+.app-profile-button[aria-expanded='true'] .app-profile-chevron { transform: rotate(180deg); }
+
+.app-profile-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  display: grid;
+  min-width: 168px;
+  padding: 6px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
+  box-shadow: 0 12px 32px var(--shadow-strong);
+}
+
+.app-profile-menu[hidden] { display: none; }
+
+.app-profile-item {
+  display: flex;
+  align-items: center;
+  min-height: 42px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 10px;
+  color: var(--ink);
+  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  text-align: left;
+  text-decoration: none;
+}
+
+.app-profile-item:hover { background: var(--mist); }
+
 /* 메뉴가 한 줄에 다 들어가지 않으면 메뉴를 아래 줄로 내려 6칸으로 나눕니다. */
-@media (max-width: 1000px) {
+@media (max-width: 1180px) {
   .app-header { position: static; }
 
   .app-header-inner {
     flex-wrap: wrap;
-    row-gap: 10px;
+    row-gap: 6px;
     min-height: 0;
-    padding-top: 14px;
-    padding-bottom: 10px;
+    padding-top: 12px;
   }
 
   .app-header.has-nav .app-nav {
@@ -78,14 +151,18 @@
     order: 3;
     grid-template-columns: repeat(6, minmax(0, 1fr));
     width: 100%;
+    gap: 0;
   }
 
-  .app-nav-link { justify-content: center; padding: 8px 4px; font-size: 14px; }
+  .app-nav-link { justify-content: center; min-height: 46px; padding: 0 4px; font-size: 14px; }
+  .app-header:not(.has-nav) .app-header-inner { padding-bottom: 12px; }
 }
 
-/* 휴대폰: 여섯 메뉴를 3개씩 두 줄로 */
+/* 휴대폰: 여섯 메뉴를 3개씩 두 줄로, 닉네임은 숨기고 아이콘만 */
 @media (max-width: 560px) {
-  .app-brand { width: 84px; }
+  .app-brand { width: 124px; }
+  .app-profile { padding-left: 0; border-left: 0; }
+  .app-profile-name { display: none; }
   .app-header.has-nav .app-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .app-nav-link { font-size: 13px; }
 }
