@@ -1,117 +1,94 @@
-.journey { margin-top: 36px; }
-
-.journey > h2 {
-  margin: 0 0 14px;
-  font-size: 18px;
-  font-weight: 700;
-  letter-spacing: -0.5px;
+/* 홈 오른쪽 '나의 탐험 기록' (바깥 카드 모양은 Home.css의 .home-card) */
+.journey-stack {
+  display: grid;
+  gap: 14px;
+  margin-top: 18px;
 }
 
-.journey-grid {
-  display: grid;
-  gap: 12px;
-  margin-top: 12px;
+/* 미션 · 레벨 · 배지 각 칸 */
+.journey-sub {
+  padding: 16px 18px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: var(--paper);
 }
 
 .journey-label {
   display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
-  gap: 4px 10px;
+  gap: 8px;
   margin: 0 0 10px;
-  color: var(--moss);
-  font-size: 13px;
+  color: var(--ink);
+  font-size: 14px;
   font-weight: 650;
 }
 
-.journey-label > span {
-  color: var(--muted);
-  font-size: 12px;
-  font-weight: 500;
-}
+.journey-mission .journey-label { justify-content: flex-start; }
+.journey-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--olive); }
+.journey-count { color: var(--soft-text); font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
 
 .journey-muted {
   margin: 8px 0 0;
-  color: var(--muted);
+  color: var(--soft-text);
   font-size: 13px;
   line-height: 1.5;
 }
 
-/* 흰 바탕과 완료 체크를 사용해 다른 카드와 같은 흐름으로 보여 줍니다. */
-.journey-mission {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
-  gap: 0 16px;
-  padding: 20px 20px 18px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  color: var(--ink);
-  background: var(--paper);
-}
-
-.journey-mission .journey-label { grid-column: 1; color: var(--muted); }
-.journey-mission .journey-label > span { color: var(--moss); }
-
+/* 오늘의 미션 */
 .journey-mission-text {
-  grid-column: 1;
-  margin: 0;
-  font-size: 15px;
-  font-weight: 600;
-  letter-spacing: -0.3px;
-  line-height: 1.6;
+  margin: 0 0 12px;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: -0.4px;
+  line-height: 1.5;
+  word-break: keep-all;
 }
 
 .journey-mission-button {
-  grid-column: 2;
-  grid-row: 1 / span 2;
-  align-self: center;
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  min-height: 44px;
-  padding: 8px 12px;
+  min-height: 40px;
+  padding: 6px 14px 6px 10px;
   border: 1px solid var(--field-line);
   border-radius: 10px;
-  color: var(--olive-deep);
+  color: var(--ink);
   background: var(--paper);
   font-size: 14px;
   font-weight: 600;
 }
 
 .journey-mission-button:hover { background: var(--mist); }
-.journey-mission-check { display: grid; place-items: center; width: 22px; height: 22px; border: 1px solid currentColor; border-radius: 6px; }
-.journey-mission-check svg { visibility: hidden; }
-.journey-mission-button[aria-pressed='true'] .journey-mission-check svg { visibility: visible; }
 
-.journey-mission.is-done .journey-mission-button {
-  border-color: var(--olive);
+.journey-mission-check {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  border: 1.5px solid var(--field-line);
+  border-radius: 5px;
   color: var(--paper);
-  background: var(--olive);
 }
 
+.journey-mission-check svg { visibility: hidden; }
+
+.journey-mission.is-done .journey-mission-check { border-color: var(--olive); background: var(--olive); }
+.journey-mission.is-done .journey-mission-check svg { visibility: visible; }
+
 .journey-mission.is-done .journey-mission-text {
+  color: var(--soft-text);
   text-decoration: line-through;
   text-decoration-color: var(--track);
 }
 
-/* 레벨 */
-.journey-level,
-.journey-badges {
-  padding: 18px 20px;
-  border: 1px solid var(--line);
-  border-radius: 18px;
-  background: var(--paper);
-}
-
+/* 탐험 레벨 */
 .journey-level-name {
-  margin: 0 0 10px;
-  font-size: 17px;
-  font-weight: 700;
-  letter-spacing: -0.4px;
+  margin: 0 0 12px;
+  font-size: 19px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
 }
-
-.journey-level-n { color: var(--leaf); font-variant-numeric: tabular-nums; }
 
 .journey-track {
   display: block;
@@ -126,58 +103,96 @@
   height: 100%;
   min-width: 2px;
   border-radius: inherit;
-  background: var(--pine);
+  background: var(--olive);
   transition: width 0.5s ease;
 }
 
-/* 배지 */
-.journey-badges ul {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
+/* 모은 배지: 동그란 아이콘 3개 */
+.journey-badge-preview {
+  display: flex;
+  justify-content: space-around;
   gap: 8px;
-  margin: 0;
+  margin: 6px 0 2px;
   padding: 0;
   list-style: none;
 }
 
-.journey-badges li {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
-  padding: 10px 12px;
-  border: 1px solid var(--line);
-  border-radius: 12px;
-  background: var(--page);
-  opacity: 0.6;
+.journey-badge-preview li {
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border: 1.5px dashed var(--field-line);
+  border-radius: 50%;
+  color: var(--muted);
+  background: var(--paper);
+  opacity: 0.7;
 }
 
-.journey-badges li.is-earned {
-  border-color: var(--dew);
+.journey-badge-preview li.is-earned {
+  border: 0;
+  color: var(--olive-deep);
   background: var(--dew);
   opacity: 1;
 }
 
-.journey-badge-mark {
-  flex: none;
+/* 펼친 배지 목록 */
+.journey-badge-all {
   display: grid;
+  gap: 8px;
+  margin: 14px 0 0;
+  padding: 14px 0 0;
+  border-top: 1px solid var(--line);
+  list-style: none;
+}
+
+.journey-badge-all[hidden] { display: none; }
+
+.journey-badge-all li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  opacity: 0.6;
+}
+
+.journey-badge-all li.is-earned { background: var(--dew); opacity: 1; }
+
+.journey-badge-mark {
+  display: grid;
+  flex: none;
   place-items: center;
   width: 32px;
   height: 32px;
-  margin-top: 1px;
   border-radius: 10px;
   color: var(--muted);
   background: var(--mist);
 }
 
-.journey-badges li.is-earned .journey-badge-mark {
-  color: var(--paper);
-  background: var(--pine);
-}
+.journey-badge-all li.is-earned .journey-badge-mark { color: var(--paper); background: var(--olive); }
 
 .journey-badge-text { display: grid; gap: 2px; min-width: 0; }
 .journey-badge-text strong { font-size: 14px; font-weight: 700; }
 .journey-badge-text span { color: var(--soft-text); font-size: 12px; line-height: 1.45; }
 
-@media (max-width: 380px) {
-  .journey-badges ul { grid-template-columns: 1fr; }
+/* 아래 '탐험 기록 전체 보기' */
+.journey-more {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 40px;
+  margin-top: 14px;
+  padding: 0;
+  border: 0;
+  color: var(--ink);
+  background: none;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 4px;
 }
+
+.journey-more:hover { color: var(--olive-deep); }
+.journey-more-icon { display: grid; transition: transform 0.15s ease; }
+.journey-more[aria-expanded='true'] .journey-more-icon { transform: rotate(180deg); }

@@ -2,13 +2,19 @@ import { useCallback, useEffect, useState } from 'react'
 import { Navigate } from 'react-router-dom'
 import { ApiError, errorMessage } from '../api/client.js'
 import { getJourney, getMe } from '../api/me.js'
+import { useAuth } from '../auth/AuthContext.js'
 import AppLayout from '../components/AppLayout.jsx'
 import FeedDeck from '../components/FeedDeck.jsx'
+import HomeHero from '../components/HomeHero.jsx'
 import JourneyPanel from '../components/JourneyPanel.jsx'
 import PageStatus from '../components/PageStatus.jsx'
 import ProfileSummary from '../components/ProfileSummary.jsx'
+import { rememberMe } from '../lib/profileCache.js'
+import './Home.css'
 
 export default function Home() {
+  const { user } = useAuth()
+  const userId = user?.id
   const [me, setMe] = useState(null)
   const [journey, setJourney] = useState(null)
   const [journeySettled, setJourneySettled] = useState(false) // 성공·실패와 관계없이 첫 응답을 받았는지
@@ -21,6 +27,7 @@ export default function Home() {
     getMe().then(
       (data) => {
         if (!active) return
+        rememberMe(userId, data) // 헤더의 닉네임이 /me를 다시 부르지 않게
         setMe(data)
         setStatus('ready')
       },
@@ -37,7 +44,7 @@ export default function Home() {
     return () => {
       active = false
     }
-  }, [reloadKey])
+  }, [reloadKey, userId])
 
   // 여정(연속 접속·오늘 장수·레벨·미션·배지)은 못 불러와도 홈은 그대로 씁니다.
   // 다만 오늘 고른 장수로 하루 5장을 막으므로, 첫 응답이 올 때까지는 카드를 보여 주지 않습니다.
@@ -89,11 +96,23 @@ export default function Home() {
 
   const today = journey && { count: journey.today_count, goal: journey.daily_goal, streak: journey.streak }
 
+  // 웹: 맨 위 배너, 그 아래 3단 (왼쪽 나의 탐색 프로필 · 가운데 오늘의 카드 · 오른쪽 나의 탐험 기록).
+  // 좁은 화면: 배너 → 프로필 → 카드 → 탐험 기록 순서로 한 줄씩.
   return (
-    <AppLayout>
-      <ProfileSummary me={me} persona={journey?.persona} level={journey?.level} />
-      <FeedDeck today={today} waiting={!journeySettled} onReacted={handleReacted} onSaved={refreshJourney} />
-      {journey && <JourneyPanel journey={journey} />}
+    <AppLayout hero={<HomeHero />}>
+      <div className="home-layout">
+        <div className="home-profile">
+          <ProfileSummary me={me} persona={journey?.persona} level={journey?.level} />
+        </div>
+        <div className="home-feed">
+          <FeedDeck today={today} waiting={!journeySettled} onReacted={handleReacted} onSaved={refreshJourney} />
+        </div>
+        {journey && (
+          <div className="home-journey">
+            <JourneyPanel journey={journey} />
+          </div>
+        )}
+      </div>
     </AppLayout>
   )
 }

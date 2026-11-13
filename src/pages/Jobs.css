@@ -1,7 +1,12 @@
 .jobs-filter {
   display: grid;
   gap: 6px;
-  margin-bottom: 16px;
+  max-width: 380px;
+  margin-bottom: 20px;
+}
+
+@media (max-width: 720px) {
+  .jobs-filter { max-width: none; }
 }
 
 .jobs-filter label {
@@ -49,21 +54,32 @@
 
 .jobs-inline-error p { margin: 0; color: var(--danger); font-size: 14px; }
 
+/* 웹은 한 줄에 여러 개(칸 폭 300px 이상), 좁은 화면은 한 줄에 하나 */
 .jobs-list {
   display: grid;
-  gap: 10px;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
   margin: 0;
   padding: 0;
   list-style: none;
   transition: opacity 0.2s ease;
 }
 
+.jobs-list > li { display: flex; }
+
+@media (max-width: 720px) {
+  .jobs-list { grid-template-columns: 1fr; gap: 10px; }
+}
+
 .jobs-list.is-busy { opacity: 0.55; }
 
+/* 같은 줄의 카드 높이를 맞추고, 적합도 막대는 카드 맨 아래에 둡니다. */
 .jobs-item {
   display: grid;
+  grid-template-rows: auto 1fr auto;
+  flex: 1;
   gap: 8px;
-  padding: 16px 18px;
+  padding: 18px 20px;
   border: 1px solid var(--line);
   border-radius: 16px;
   color: var(--ink);
@@ -91,6 +107,8 @@
 
 .jobs-more {
   justify-content: center;
-  width: 100%;
-  margin-top: 14px;
+  width: min(100%, 380px);
+  margin: 24px auto 0;
 }
+
+.jobs-more:not([hidden]) { display: flex; }

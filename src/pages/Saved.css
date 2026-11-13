@@ -1,12 +1,24 @@
+/* 웹은 한 줄에 여러 장(칸 폭 340px 이상), 좁은 화면은 한 줄에 한 장 */
 .saved-list {
   display: grid;
-  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
+.saved-list > li { display: flex; }
+
+@media (max-width: 720px) {
+  .saved-list { grid-template-columns: 1fr; gap: 12px; }
+}
+
 .saved-card {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  align-items: flex-start;
   padding: 20px 20px 18px;
   border: 1px solid var(--line);
   border-radius: 18px;
@@ -14,6 +26,7 @@
 }
 
 .saved-top {
+  align-self: stretch;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -63,6 +76,9 @@
 }
 
 .saved-body:last-child { margin-bottom: 0; }
+
+/* 같은 줄 카드의 학과·버튼 위치를 맞추도록 본문이 남는 높이를 채웁니다. */
+.saved-card > .saved-body { flex-grow: 1; }
 
 .saved-roadmap-link {
   display: inline-flex;

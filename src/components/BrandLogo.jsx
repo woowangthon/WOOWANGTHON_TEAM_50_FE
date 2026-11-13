@@ -1,30 +1,40 @@
-import { useId } from 'react'
-import logo from '../assets/findme-logo.png'
 import './BrandLogo.css'
 
+// FindME 로고: 선으로 그린 망원경 아이콘 + 작은 반짝임 + 글자. 색은 글자색(currentColor)을 따릅니다.
+// decorative: 링크 안처럼 옆에 이름이 따로 있을 때 켜서 화면 읽기 프로그램이 두 번 읽지 않게 합니다.
 export default function BrandLogo({ decorative = false }) {
-  const tintId = useId()
   return (
     <svg
       className="brand-logo"
       xmlns="http://www.w3.org/2000/svg"
-      viewBox="330 135 960 665"
-      width="960"
-      height="665"
+      viewBox="0 0 178 46"
       role={decorative ? undefined : 'img'}
       aria-label={decorative ? undefined : 'FindME'}
       aria-hidden={decorative ? true : undefined}
       focusable="false"
     >
-      <defs>
-        <filter id={tintId} colorInterpolationFilters="sRGB">
-          <feColorMatrix type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  -1 0 0 1 0" result="ink" />
-          <feFlood floodColor="var(--brown)" result="brand-color" />
-          <feComposite in="brand-color" in2="ink" operator="in" />
-        </filter>
-      </defs>
-      {/* 원본 로고를 보존하고 화면에서만 공통 브랜드 색상을 적용합니다. */}
-      <image href={logo} width="1599" height="984" filter={`url(#${tintId})`} />
+      <g fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+        {/* 망원경 몸통 · 앞쪽 렌즈 테 · 접안부 */}
+        <path d="M9 27 33 13.5l4 7L13 34Z" />
+        <path d="M33.5 11.5 39.8 8l4.6 8.1-6.3 3.5Z" />
+        <path d="M9 27 5.6 29l3 5.2L12 32.3" />
+        {/* 삼각대 */}
+        <path d="M22.5 27.5 15.5 43M22.5 27.5V43M22.5 27.5 29.5 43" />
+      </g>
+      {/* 반짝임 */}
+      <path d="M48 1.5l1.3 3.9 3.9 1.3-3.9 1.3L48 11.9l-1.3-3.9-3.9-1.3 3.9-1.3Z" fill="currentColor" />
+      <text
+        x="58"
+        y="35"
+        textLength="118"
+        lengthAdjust="spacingAndGlyphs"
+        fill="currentColor"
+        fontFamily="Georgia, 'Times New Roman', serif"
+        fontSize="30"
+        fontWeight="700"
+      >
+        FindME
+      </text>
     </svg>
   )
 }
