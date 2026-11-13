@@ -41,6 +41,9 @@ function ReadyReport({ report }) {
           {report.summary_by_ai ? 'AI 진로 동료가 정리한 내 성향' : '반응 기록으로 정리한 내 성향'}
         </h2>
         <p className="report-summary-text">{report.summary}</p>
+        <Link to="/chat" state={{ draft: '내 성향을 쉽게 설명해 줘' }} className="report-summary-chat">
+          AI 동료에게 더 물어보기
+        </Link>
       </section>
 
       <section className="report-section report-traits">

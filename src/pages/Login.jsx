@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { wakeServer } from '../api/client.js'
 import { useAuth } from '../auth/AuthContext.js'
+import { USE_MOCK } from '../lib/config.js'
 import MockNotice from '../components/MockNotice.jsx'
 import { MIN_PASSWORD_LENGTH, validateLogin } from '../utils/validateLogin.js'
 import './Login.css'
@@ -39,6 +41,11 @@ export default function Login() {
   const [message, setMessage] = useState({ text: '', tone: 'info' })
   const errors = validateLogin(values, mode)
   const copy = COPY[mode]
+
+  // 배포 서버가 잠들어 있으면 깨어나는 데 50초쯤 걸리므로, 로그인 정보를 적는 동안 미리 깨웁니다.
+  useEffect(() => {
+    if (!USE_MOCK) wakeServer()
+  }, [])
 
   // 이미 로그인했다면 로그인 화면 대신 홈으로 보냅니다. (제출 중에는 아래 handleSubmit이 이동을 맡습니다)
   if (session && !submitting) return <Navigate to={location.state?.from || '/home'} replace />

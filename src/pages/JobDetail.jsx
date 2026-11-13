@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Link, useLocation, useParams } from 'react-router-dom'
 import { errorMessage } from '../api/client.js'
+import { askJob } from '../api/coach.js'
 import { getJob } from '../api/jobs.js'
 import AppLayout from '../components/AppLayout.jsx'
 import MajorList from '../components/MajorList.jsx'
@@ -77,6 +78,76 @@ function Steps({ steps }) {
           </li>
         ))}
       </ol>
+    </section>
+  )
+}
+
+// AI 동료에게 정해진 질문하기 (POST /jobs/{job_id}/ask). 자유 입력은 없고, 더 묻고 싶으면 대화 화면으로 이어 갑니다.
+// 답을 한 번 받은 질문은 다시 누르면 접고 펼치기만 합니다.
+function AskAi({ job }) {
+  const [answers, setAnswers] = useState({}) // { [questionId]: { status: 'loading' | 'done' | 'error', answer, byAi, message, open } }
+  if (!job.questions?.length) return null
+
+  async function ask(question) {
+    const current = answers[question.id]
+    if (current?.status === 'loading') return
+    if (current?.status === 'done') {
+      setAnswers((previous) => ({ ...previous, [question.id]: { ...current, open: !current.open } }))
+      return
+    }
+    setAnswers((previous) => ({ ...previous, [question.id]: { status: 'loading', open: true } }))
+    try {
+      const result = await askJob(job.job_id, question.id)
+      setAnswers((previous) => ({
+        ...previous,
+        [question.id]: { status: 'done', answer: result.answer, byAi: Boolean(result.by_ai), open: true },
+      }))
+    } catch (error) {
+      setAnswers((previous) => ({ ...previous, [question.id]: { status: 'error', message: errorMessage(error), open: true } }))
+    }
+  }
+
+  return (
+    <section className="roadmap-section job-ask" aria-labelledby="job-ask-title">
+      <h2 id="job-ask-title">AI 동료에게 물어보기</h2>
+      <p className="job-ask-lead">궁금한 질문을 누르면 AI 동료가 이 직업 자료와 내 반응 기록으로 답해 줘요.</p>
+      <ul className="job-ask-list">
+        {job.questions.map((question) => {
+          const state = answers[question.id]
+          const answerId = `job-ask-${question.id}`
+          return (
+            <li key={question.id}>
+              <button
+                type="button"
+                className="job-ask-question"
+                aria-expanded={Boolean(state?.open)}
+                aria-controls={answerId}
+                onClick={() => ask(question)}
+              >
+                {question.label}
+              </button>
+              <div id={answerId} hidden={!state?.open}>
+                {state?.status === 'loading' && <p className="job-ask-answer is-loading" role="status">답을 준비하고 있어요…</p>}
+                {state?.status === 'done' && (
+                  <div className="job-ask-answer">
+                    <p>{state.answer}</p>
+                    <span className="job-ask-source">{state.byAi ? 'AI 동료의 답' : 'AI 대신 자료와 내 기록으로 만든 답'}</span>
+                  </div>
+                )}
+                {state?.status === 'error' && (
+                  <p className="job-ask-error" role="alert">
+                    {state.message}{' '}
+                    <button type="button" onClick={() => ask(question)}>다시 묻기</button>
+                  </p>
+                )}
+              </div>
+            </li>
+          )
+        })}
+      </ul>
+      <Link to="/chat" state={{ draft: `${job.name}에 대해 더 이야기하고 싶어` }} className="job-ask-chat">
+        AI 동료와 {job.name} 이야기 더 하기
+      </Link>
     </section>
   )
 }
@@ -187,6 +258,7 @@ function JobDetailContent({ jobId }) {
           </section>
 
           <TraitCompare traits={job.traits} hasMatch={hasMatch} />
+          <AskAi job={job} />
           <Steps steps={job.steps} />
           <SimilarJobs jobs={job.similar} from={from} />
 

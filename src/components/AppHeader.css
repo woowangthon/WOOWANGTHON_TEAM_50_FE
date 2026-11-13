@@ -46,7 +46,7 @@
 
 .app-nav {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   gap: 4px;
   margin-top: 14px;
   padding: 4px;
@@ -54,9 +54,11 @@
   background: var(--mist);
 }
 
-/* 메뉴 4개가 한 줄에 들어가지 않는 좁은 화면에서는 2 × 2로 나눕니다. */
-@media (max-width: 440px) {
-  .app-nav { grid-template-columns: repeat(2, 1fr); }
+/* 메뉴 5개가 한 줄에 들어가지 않는 좁은 화면에서는 위 3개 · 아래 2개로 나눕니다. (6칸 격자에서 2칸 · 3칸씩) */
+@media (max-width: 540px) {
+  .app-nav { grid-template-columns: repeat(6, 1fr); }
+  .app-nav-link { grid-column: span 2; }
+  .app-nav-link:nth-child(n + 4) { grid-column: span 3; }
 }
 
 .app-nav-link {
