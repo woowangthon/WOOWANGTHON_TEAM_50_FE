@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useAuth } from '../auth/AuthContext.js'
 import { getDoneMissionId, setDoneMissionId } from '../lib/mission.js'
 import UiIcon from './UiIcon.jsx'
+import badgeSheet from '../assets/journey-badges.png'
 import './JourneyPanel.css'
 
 function Mission({ mission }) {
@@ -49,8 +50,28 @@ function Level({ level, nReactions }) {
   )
 }
 
-const BADGE_ICONS = { first_step: 'footprints', collector: 'bookmark', decider: 'decision', explorer: 'compass', streak3: 'flame', streak7: 'calendar', report: 'sparkles' }
+// 원본 투명 PNG의 각 배지를 SVG viewBox로 잘라 표시합니다.
+const BADGE_REGIONS = {
+  first_step: [7, 7],
+  collector: [259, 7],
+  decider: [511, 7],
+  explorer: [763, 7],
+  streak3: [131, 252],
+  streak7: [384, 252],
+  report: [637, 252],
+}
 const PREVIEW_COUNT = 3
+
+function BadgeArt({ id }) {
+  const region = BADGE_REGIONS[id]
+  if (!region) return <UiIcon name="award" size={24} />
+
+  return (
+    <svg className="journey-badge-art" viewBox={`${region[0]} ${region[1]} 248 248`} aria-hidden="true" focusable="false">
+      <image href={badgeSheet} width="1024" height="512" />
+    </svg>
+  )
+}
 
 // 모은 배지: 평소엔 아이콘 3개(받은 배지 먼저, 모자라면 아직 못 받은 배지를 흐리게)만,
 // '탐험 기록 전체 보기'를 누르면 7개 배지의 이름과 조건이 아래에 펼쳐집니다.
@@ -66,7 +87,7 @@ function Badges({ badges, open }) {
       <ul className="journey-badge-preview">
         {preview.map((badge) => (
           <li key={badge.id} className={badge.earned ? 'is-earned' : undefined} title={badge.name}>
-            <UiIcon name={BADGE_ICONS[badge.id] || 'award'} size={24} />
+            <BadgeArt id={badge.id} />
             <span className="visually-hidden">{badge.name} {badge.earned ? '(받았어요)' : '(아직 받지 않았어요)'}</span>
           </li>
         ))}
@@ -75,7 +96,7 @@ function Badges({ badges, open }) {
       <ul id="journey-badge-all" className="journey-badge-all" hidden={!open}>
         {badges.map((badge) => (
           <li key={badge.id} className={badge.earned ? 'is-earned' : undefined}>
-            <span className="journey-badge-mark"><UiIcon name={BADGE_ICONS[badge.id] || 'award'} /></span>
+            <span className="journey-badge-mark"><BadgeArt id={badge.id} /></span>
             <span className="journey-badge-text">
               <strong>{badge.name}</strong>
               <span>{badge.description}</span>
