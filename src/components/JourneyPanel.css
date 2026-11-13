@@ -73,7 +73,7 @@
 
 .journey-mission-check svg { visibility: hidden; }
 
-.journey-mission.is-done .journey-mission-check { border-color: var(--olive); background: var(--olive); }
+.journey-mission.is-done .journey-mission-check { border-color: var(--yellow); color: var(--navy-deep); background: var(--yellow); }
 .journey-mission.is-done .journey-mission-check svg { visibility: visible; }
 
 .journey-mission.is-done .journey-mission-text {

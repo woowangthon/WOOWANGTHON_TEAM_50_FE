@@ -349,12 +349,12 @@
 .feed-option:hover:not(:disabled) { background: var(--mist); }
 
 .feed-reaction.is-primary {
-  border-color: var(--olive-deep);
+  border-color: var(--navy);
   color: var(--paper);
-  background: var(--olive-deep);
+  background: var(--navy);
 }
 
-.feed-reaction.is-primary:hover:not(:disabled) { border-color: #48543b; background: #48543b; }
+.feed-reaction.is-primary:hover:not(:disabled) { border-color: var(--navy-deep); background: var(--navy-deep); }
 
 .feed-options { display: grid; gap: 10px; }
 .feed-option { justify-content: flex-start; border-width: 1px; border-color: var(--field-line); font-weight: 600; line-height: 1.5; text-align: left; word-break: keep-all; }

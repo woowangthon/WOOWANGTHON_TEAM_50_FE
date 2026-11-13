@@ -1,38 +1,48 @@
 :root {
-  /* 확정한 흰색·올리브·크림 배색. 주요 반응 버튼은 차콜을 씁니다. */
-  --olive: #6b775d;
-  --olive-deep: #566348;
-  --brown: #49312d;
-  --action: var(--brown);
-  --action-hover: #352420;
-  --charcoal: #30313b;
-  --charcoal-hover: #23242b;
-  --ochre: #eac882;
-  --cream: #faf1dc;
-  --card-day-bg: #fff2bd;
-  --ink: #3d352f;
-  --muted: #65685f;
+  /* 최종 배색: 네이비 × 옐로 × 스카이 (#273B67 · #F2C94C · #73C9E8)
+     네이비는 글자·주요 버튼·진행 막대, 옐로는 강조(칩·별·체크), 스카이는 보조(연한 배경·궤도 선)에 씁니다. */
+  --navy: #273b67;
+  --navy-deep: #1b2a4d;
+  --yellow: #f2c94c;
+  --yellow-soft: #fdf3d3;
+  --sky: #73c9e8;
+  --sky-soft: #e4f4fb;
+
+  /* 아래 이름(olive · brown · cream 등)은 예전 배색 때 붙인 이름입니다.
+     모든 화면이 이 이름을 쓰고 있어서 이름은 그대로 두고 값만 새 배색으로 바꿨습니다. */
+  --olive: var(--navy);
+  --olive-deep: var(--navy-deep);
+  --brown: var(--navy-deep);
+  --action: var(--navy);
+  --action-hover: var(--navy-deep);
+  --charcoal: var(--navy);
+  --charcoal-hover: var(--navy-deep);
+  --ochre: var(--yellow);
+  --cream: var(--yellow-soft);
+  --card-day-bg: #fce9a6;
+  --ink: #1f2a44;
+  --muted: #5e6880;
   --soft-text: var(--muted);
-  --line: #e8eae2;
-  --field-line: #cfd3c7;
-  --mist: #f5f6f1;
-  --dew: #e8eddd;
+  --line: #e4e9f1;
+  --field-line: #c9d2e1;
+  --mist: #f3f6fa;
+  --dew: var(--sky-soft);
   --paper: #ffffff;
   --page: var(--paper);
-  --track: #d8dece;
-  --graph-grid: #d8dece;
-  --olive-wash: #6b775d26;
-  --olive-hover: #6b775d12;
-  --focus-ring: var(--olive-deep);
+  --track: #d8e0ec;
+  --graph-grid: #d8e0ec;
+  --olive-wash: #273b6724;
+  --olive-hover: #273b6710;
+  --focus-ring: var(--navy);
   --focus-wash: var(--olive-wash);
-  --placeholder: #74776e;
-  --on-accent-muted: #f4f4e8;
+  --placeholder: #77819a;
+  --on-accent-muted: #dfe6f3;
   --inverse-line: #ffffff66;
   --inverse-hover: #ffffff1a;
-  --shadow-soft: #49312d08;
-  --shadow-medium: #49312d0d;
-  --shadow-strong: #30261d26;
-  --backdrop: #3d352f66;
+  --shadow-soft: #1b2a4d0a;
+  --shadow-medium: #1b2a4d12;
+  --shadow-strong: #1b2a4d2e;
+  --backdrop: #1f2a4466;
   --danger: #ab302e;
   --danger-soft: #fbeeed;
 

@@ -2,5 +2,7 @@
   display: block;
   width: 100%;
   height: auto;
-  color: var(--ink);
+  color: var(--navy);
 }
+
+.brand-logo-spark { fill: var(--yellow); }

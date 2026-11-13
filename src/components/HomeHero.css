@@ -1,7 +1,7 @@
 /* 홈 배너: 화면 폭 전체의 옅은 올리브 배경 */
 .home-hero {
   overflow: hidden;
-  background: linear-gradient(100deg, #e9ecdf 0%, #eef0e6 55%, #f3f4ee 100%);
+  background: linear-gradient(100deg, #e6f2fa 0%, #eef6fb 55%, #f7fafd 100%);
 }
 
 .home-hero-inner {
